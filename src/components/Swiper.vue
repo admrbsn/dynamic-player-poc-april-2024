@@ -64,11 +64,16 @@ onMounted(() => {
 <style>
 .intro-slide-visible .swiper-container::part(button-prev),
 .intro-slide-visible .swiper-container::part(button-next) {
-  display: none !important;
+  @apply hidden !important;
+}
+
+.swiper-container::part(button-prev),
+.swiper-container::part(button-next) {
+  @apply hidden md:flex !important;
 }
 
 swiper-slide video,
 swiper-slide img {
-  @apply w-full h-screen md:w-[768px] md:h-[432px] mx-auto object-cover;
+  @apply w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto object-cover;
 }
 </style>

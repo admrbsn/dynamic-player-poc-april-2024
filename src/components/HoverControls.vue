@@ -6,14 +6,15 @@
       left-1/2
       transform
       -translate-x-1/2 -translate-y-1/2
-      w-full
-      h-screen
+      w-full h-[300px]
       md:w-[768px] md:h-[432px]
       bg-transparent
       z-10
     "
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
+    @touchstart="handleMouseOver"
+    @touchend="handleMouseLeave"
   >
     <div
       v-if="countdown > 0"
@@ -37,6 +38,7 @@
       {{ countdown }}
     </div>
     <button
+      v-if="isHovering"
       @click="togglePlayPause"
       class="
         absolute
