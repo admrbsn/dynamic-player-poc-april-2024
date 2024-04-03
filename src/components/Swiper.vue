@@ -19,6 +19,7 @@
           <VideoPlayer
             :url="item.url"
             :index="index"
+            :isVideoMuted="isMuted"
             @mediaEnd="handleMediaEnd"
           />
         </template>
@@ -31,7 +32,9 @@
   <HoverControls
     :countdown="countdown"
     :isPlaying="isPlaying"
+    :isVideoMuted="isMuted"
     @toggle="togglePlayPause"
+    @requestToggleMute="toggleGlobalMute"
   />
 </template>
 
@@ -39,7 +42,7 @@
 import useSwiper from '../composables/useSwiper';
 import VideoPlayer from './VideoPlayer.vue';
 import HoverControls from './HoverControls.vue';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -54,6 +57,16 @@ const {
   onSlideChange,
   onProgress,
 } = useSwiper();
+
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+const isMuted = ref(isMobileDevice());
+
+const toggleGlobalMute = () => {
+  isMuted.value = !isMuted.value;
+};
 
 onMounted(() => {
   const mediaElements = document.querySelectorAll('video, img');

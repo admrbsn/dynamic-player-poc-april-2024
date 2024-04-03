@@ -1,4 +1,10 @@
 <template>
+  <button
+    @click="toggleMute"
+    class="absolute top-3 right-3 py-1.5 px-3 rounded bg-black text-white z-30"
+  >
+    <component :is="muteIconComponent" class="w-6 h-6 text-white" />
+  </button>
   <div
     class="
       absolute
@@ -69,16 +75,18 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { PlayIcon, PauseIcon } from '@heroicons/vue/24/solid';
+import { PlayIcon, PauseIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/vue/24/solid';
 
 const props = defineProps({
   countdown: Number,
   isPlaying: Boolean,
+  isVideoMuted: Boolean,
 });
 
-const emits = defineEmits(['toggle']);
+const emits = defineEmits(['toggle', 'toggleMute']);
 const isHovering = ref(false);
 const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
+const muteIconComponent = computed(() => props.isVideoMuted ? SpeakerWaveIcon : SpeakerXMarkIcon);
 
 const handleMouseOver = () => {
   isHovering.value = true;
@@ -90,5 +98,9 @@ const handleMouseLeave = () => {
 
 const togglePlayPause = () => {
   emits('toggle');
+};
+
+const toggleMute = () => {
+  emits('requestToggleMute');
 };
 </script>
