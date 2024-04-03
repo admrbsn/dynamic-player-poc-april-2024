@@ -11,6 +11,8 @@ export default function useSwiper() {
   const autoAdvanceTimer = ref(null);
   const countdown = ref(0);
   const remainingTime = ref(0);
+  const isMuted = ref(true);
+  const isMobile = ref(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 
   const onSlideChange = (event) => {
     const swiper = event.target.swiper;
@@ -51,6 +53,24 @@ export default function useSwiper() {
         'intro-slide-visible',
         e.detail[1] === 0
       );
+
+      if (isMobile.value) {
+        directSwiperWrapper.classList.toggle(
+          'show-unmute-tip',
+          e.detail[1] === 0
+        );
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    isMuted.value = !isMuted.value;
+
+    if (isMobile.value) {
+      const directSwiperWrapper = document.querySelector('.swiper-wrapper');
+      if (directSwiperWrapper) {
+        directSwiperWrapper.classList.toggle('show-unmute-tip', isMuted.value);
+      }
     }
   };
 
@@ -106,11 +126,14 @@ export default function useSwiper() {
   return {
     mediaItems,
     media,
+    isMobile,
+    isMuted,
     isPlaying,
     countdown,
     handleMediaEnd,
     togglePlayPause,
     onSlideChange,
     onProgress,
+    toggleMute, 
   };
 }

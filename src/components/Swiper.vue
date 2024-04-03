@@ -33,8 +33,8 @@
     :countdown="countdown"
     :isPlaying="isPlaying"
     :isVideoMuted="isMuted"
-    @toggle="togglePlayPause"
-    @requestToggleMute="toggleGlobalMute"
+    @requestPlayPause="togglePlayPause"
+    @requestMute="toggleMute"
   />
 </template>
 
@@ -42,7 +42,7 @@
 import useSwiper from '../composables/useSwiper';
 import VideoPlayer from './VideoPlayer.vue';
 import HoverControls from './HoverControls.vue';
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -50,23 +50,15 @@ register();
 const {
   mediaItems,
   media,
+  isMuted,
   isPlaying,
   countdown,
   handleMediaEnd,
   togglePlayPause,
   onSlideChange,
   onProgress,
+  toggleMute,
 } = useSwiper();
-
-const isMobileDevice = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-};
-
-const isMuted = ref(isMobileDevice());
-
-const toggleGlobalMute = () => {
-  isMuted.value = !isMuted.value;
-};
 
 onMounted(() => {
   const mediaElements = document.querySelectorAll('video, img');
@@ -75,6 +67,15 @@ onMounted(() => {
 </script>
 
 <style>
+:root {
+  --swiper-pagination-color: #000;
+}
+
+.intro-slide-visible.show-unmute-tip:before {
+  content: "";
+  @apply absolute top-0 left-0 w-full h-full bg-black/20 z-30;
+}
+
 .intro-slide-visible .swiper-container::part(button-prev),
 .intro-slide-visible .swiper-container::part(button-next) {
   @apply hidden !important;

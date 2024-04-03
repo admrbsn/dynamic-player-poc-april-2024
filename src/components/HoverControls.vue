@@ -5,6 +5,11 @@
   >
     <component :is="muteIconComponent" class="w-6 h-6 text-white" />
   </button>
+  <div class="tooltip hidden absolute top-16 right-3 max-w-72 p-4 bg-white text-black rounded shadow-lg text-center z-30">
+    <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
+    <p class="opacity-75">Please unmute your device to start enjoying your video with sound. Thanks for understanding!</p>
+    <div class="arrow-up absolute -top-2 right-4 mx-auto w-0 h-0 border-l-[0.5rem] border-l-transparent border-r-[0.5rem] border-r-transparent border-b-[0.5rem] border-b-white"></div>
+  </div>
   <div
     class="
       absolute
@@ -97,10 +102,16 @@ const handleMouseLeave = () => {
 };
 
 const togglePlayPause = () => {
-  emits('toggle');
+  emits('requestPlayPause');
 };
 
 const toggleMute = () => {
-  emits('requestToggleMute');
+  emits('requestMute');
 };
 </script>
+
+<style>
+.swiper-wrapper.intro-slide-visible.show-unmute-tip + button + .tooltip {
+  @apply block !important;
+}
+</style>
