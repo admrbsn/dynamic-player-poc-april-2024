@@ -69,6 +69,7 @@ onMounted(() => {
 <style>
 :root {
   --swiper-pagination-color: #000;
+  --swiper-navigation-color: #000;
 }
 
 .intro-slide-visible.show-unmute-tip:before {
