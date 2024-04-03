@@ -7,7 +7,7 @@ export const mediaItems = [
     type: 'video',
     url: 'https://player.vimeo.com/external/832639376.m3u8?s=2d8046d016c0c46c925f64d4c1e61bc148dacd46',
   },
-  { type: 'image', url: 'https://picsum.photos/id/27/3264/1836', duration: 4 },
+  { type: 'image', url: 'https://picsum.photos/id/27/3264/1836', duration: 8 },
   {
     type: 'video',
     url: 'https://player.vimeo.com/external/832639348.m3u8?s=3f11e4fe435908857eb79bc44a44ddcd16a5733e',

@@ -6,6 +6,7 @@
     ref="videoRef"
     playsinline
     :muted="isVideoMuted"
+    class="rounded-lg"
   ></video>
 </template>
 

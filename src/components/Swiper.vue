@@ -24,7 +24,7 @@
           />
         </template>
         <template v-else-if="item.type === 'image'">
-          <img :src="item.url" />
+          <img :src="item.url" class="rounded-lg" />
         </template>
       </swiper-slide>
     </swiper-container>
@@ -61,7 +61,7 @@ const {
 } = useSwiper();
 
 onMounted(() => {
-  const mediaElements = document.querySelectorAll('video, img');
+  const mediaElements = document.querySelectorAll('.swiper-container video, .swiper-container img');
   media.value = Array.from(mediaElements);
 });
 </script>
@@ -85,6 +85,10 @@ onMounted(() => {
 .swiper-container::part(button-prev),
 .swiper-container::part(button-next) {
   @apply hidden md:flex !important;
+}
+
+.swiper-container::part(pagination) {
+  @apply md:w-[768px] top-[calc(50%+150px)] md:top-[calc(50%+216px)] left-1/2 transform -translate-x-1/2;
 }
 
 swiper-slide video,
