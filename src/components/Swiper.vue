@@ -13,7 +13,7 @@
       <swiper-slide
         v-for="(item, index) in mediaItems"
         :key="index"
-        class="h-screen flex items-center justify-center"
+        class="h-dvh flex items-center justify-center"
       >
         <template v-if="item.type === 'video'">
           <VideoPlayer

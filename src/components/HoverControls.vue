@@ -38,7 +38,6 @@
       {{ countdown }}
     </div>
     <button
-      v-if="isHovering"
       @click="togglePlayPause"
       class="
         absolute
