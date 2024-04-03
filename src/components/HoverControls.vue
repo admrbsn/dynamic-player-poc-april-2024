@@ -27,6 +27,8 @@
         flex
         items-center
         justify-center
+        mr-[-50%]
+        md:mr-0
         bg-white
         text-black
         rounded-full

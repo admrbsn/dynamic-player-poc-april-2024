@@ -5,6 +5,7 @@
     @ended="handleMediaEnd"
     ref="videoRef"
     playsinline
+    muted
   ></video>
 </template>
 
