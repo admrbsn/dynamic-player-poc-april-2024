@@ -14,8 +14,6 @@
     "
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
-    @touchstart="handleMouseOver"
-    @touchend="handleMouseLeave"
   >
     <div
       v-if="countdown > 0"
@@ -39,7 +37,6 @@
       {{ countdown }}
     </div>
     <button
-      v-if="isHovering"
       @click="togglePlayPause"
       class="
         absolute
