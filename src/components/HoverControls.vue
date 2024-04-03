@@ -6,7 +6,7 @@
       left-1/2
       transform
       -translate-x-1/2 -translate-y-1/2
-      w-full h-[300px]
+      w-1/2 h-[300px]
       md:w-[768px] md:h-[432px]
       bg-transparent
       z-10
