@@ -11,8 +11,8 @@ export default function useSwiper() {
   const autoAdvanceTimer = ref(null);
   const countdown = ref(0);
   const remainingTime = ref(0);
-  const isMuted = ref(true);
   const isMobile = ref(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+  const isMuted = ref(isMobile.value);
 
   const onSlideChange = (event) => {
     const swiper = event.target.swiper;
