@@ -4,6 +4,7 @@
     :src="url"
     @ended="handleMediaEnd"
     ref="videoRef"
+    playsinline
   ></video>
 </template>
 
