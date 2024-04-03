@@ -1,5 +1,5 @@
 import { mediaItems } from '../mediaItems.js';
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -11,6 +11,8 @@ export default function useSwiper() {
   const autoAdvanceTimer = ref(null);
   const countdown = ref(0);
   const remainingTime = ref(0);
+  const isMuted = ref(true);
+  provide('isMuted', isMuted);
 
   const onSlideChange = (event) => {
     const swiper = event.target.swiper;
@@ -112,5 +114,6 @@ export default function useSwiper() {
     togglePlayPause,
     onSlideChange,
     onProgress,
+    isMuted,
   };
 }
