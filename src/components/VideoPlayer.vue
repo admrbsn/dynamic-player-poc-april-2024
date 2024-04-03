@@ -5,8 +5,9 @@
     @ended="handleMediaEnd"
     ref="videoRef"
     playsinline
-    muted
+    muted="muted"
   ></video>
+  <button @click="toggleMute" class="absolute right-3 bottom-3 py-1.5 px-3 rounded bg-black text-white">{{ isVideoMuted ? 'Unmute' : 'Mute' }}</button>
 </template>
 
 <script setup>
@@ -21,6 +22,7 @@ const props = defineProps({
 
 const emits = defineEmits(['mediaEnd']);
 const videoRef = ref(null);
+const isVideoMuted = ref(true);
 
 const setupHls = () => {
   if (Hls.isSupported()) {
@@ -29,6 +31,13 @@ const setupHls = () => {
     hls.attachMedia(videoRef.value);
   } else if (videoRef.value.canPlayType('application/vnd.apple.mpegurl')) {
     videoRef.value.src = props.url;
+  }
+};
+
+const toggleMute = () => {
+  if (videoRef.value) {
+    videoRef.value.muted = !videoRef.value.muted;
+    isVideoMuted.value = videoRef.value.muted;
   }
 };
 
