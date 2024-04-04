@@ -1,10 +1,11 @@
 import { mediaItems } from '../mediaItems.js';
-import { ref, provide } from 'vue';
+import { ref } from 'vue';
 import { register } from 'swiper/element/bundle';
 
 register();
 
 export default function useSwiper() {
+  const audioElement = new Audio('https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3');
   const media = ref([]);
   const currentMediaIndex = ref(0);
   const isPlaying = ref(false);
@@ -18,15 +19,27 @@ export default function useSwiper() {
   const onSlideChange = (event) => {
     const swiper = event.target.swiper;
     const newIndex = swiper.activeIndex;
+    const newMedia = mediaItems[newIndex];
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
+
+    adjustAudioVolumeForSlide(mediaItems[newIndex].type);
+    isPlaying.value = true;
+
+    if (newIndex >= 1) {
+      if (isPlaying.value) {
+        audioElement.play().catch((e) => console.error("Error playing audio:", e));
+      }
+    } else {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+    }
   
     if (autoAdvanceTimer.value) {
       clearInterval(autoAdvanceTimer.value);
       autoAdvanceTimer.value = null;
     }
-  
-    const newMedia = mediaItems[newIndex];
+
     if (newMedia.type === 'image') {
       const newMediaDuration = newMedia.duration || 5;
       countdown.value = newMediaDuration;
@@ -36,8 +49,6 @@ export default function useSwiper() {
       countdown.value = 0;
       remainingTime.value = 0;
     }
-  
-    isPlaying.value = true;
   
     media.value.forEach((mediaElement, index) => {
       if (mediaItems[index].type === 'video') {
@@ -76,6 +87,7 @@ export default function useSwiper() {
 
   const toggleMute = () => {
     isMuted.value = !isMuted.value;
+    audioElement.muted = !audioElement.muted;
 
     if (isMobile.value) {
       const directSwiperWrapper = document.querySelector('.swiper-wrapper');
@@ -105,6 +117,11 @@ export default function useSwiper() {
       }
       isPlaying.value = !isPlaying.value;
     }
+    if (isPlaying.value && currentMediaIndex.value >= 1) {
+      audioElement.play().catch((e) => console.error("Error playing audio:", e));
+    } else {
+      audioElement.pause();
+    }
   };
 
   const handleMediaEnd = (index) => {
@@ -132,6 +149,22 @@ export default function useSwiper() {
         handleMediaEnd(index);
       }
     }, 1000);
+  };
+
+  const adjustAudioVolumeForSlide = (slideType) => {
+    const targetVolume = slideType === 'image' ? 1.0 : 0.1;
+    const fadeDuration = 500;
+    const stepTime = 10;
+    const stepSize = (targetVolume - audioElement.volume) / (fadeDuration / stepTime);
+
+    const fadeAudio = setInterval(() => {
+        if ((stepSize > 0 && audioElement.volume < targetVolume) || (stepSize < 0 && audioElement.volume > targetVolume)) {
+            audioElement.volume = Math.min(1, Math.max(0, audioElement.volume + stepSize));
+        } else {
+            audioElement.volume = targetVolume;
+            clearInterval(fadeAudio);
+        }
+    }, stepTime);
   };
 
   return {

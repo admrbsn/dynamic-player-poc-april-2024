@@ -33,8 +33,8 @@
         absolute
         top-3
         right-3
-        w-7
-        h-7
+        w-8
+        h-8
         flex
         items-center
         justify-center

@@ -29,7 +29,7 @@
       </swiper-slide>
     </swiper-container>
   </div>
-  <HoverControls
+  <Controls
     :countdown="countdown"
     :isPlaying="isPlaying"
     :isVideoMuted="isMuted"
@@ -41,7 +41,7 @@
 <script setup>
 import useSwiper from '../composables/useSwiper';
 import VideoPlayer from './VideoPlayer.vue';
-import HoverControls from './HoverControls.vue';
+import Controls from './Controls.vue';
 import { onMounted } from 'vue';
 import { register } from 'swiper/element/bundle';
 
