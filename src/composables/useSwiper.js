@@ -20,32 +20,39 @@ export default function useSwiper() {
     const newIndex = swiper.activeIndex;
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
-
+  
     if (autoAdvanceTimer.value) {
       clearInterval(autoAdvanceTimer.value);
       autoAdvanceTimer.value = null;
     }
-
+  
+    const newMedia = mediaItems[newIndex];
+    if (newMedia.type === 'image') {
+      const newMediaDuration = newMedia.duration || 5;
+      countdown.value = newMediaDuration;
+      remainingTime.value = newMediaDuration;
+      startImageTimer(newIndex);
+    } else if (newMedia.type === 'video') {
+      countdown.value = 0;
+      remainingTime.value = 0;
+    }
+  
     isPlaying.value = true;
-
+  
     media.value.forEach((mediaElement, index) => {
       if (mediaItems[index].type === 'video') {
         mediaElement.pause();
         mediaElement.currentTime = 0;
       }
     });
-
-    const newMedia = mediaItems[newIndex];
+  
     if (newMedia.type === 'video') {
       const newVideo = media.value[newIndex];
       newVideo
         .play()
         .catch((error) => console.error('Error playing the video:', error));
-    } else if (newMedia.type === 'image') {
-      remainingTime.value = newMedia.duration || 5;
-      startImageTimer(newIndex);
     }
-  };
+  };  
 
   const onProgress = (e) => {
     const directSwiperWrapper = document.querySelector('.swiper-wrapper');

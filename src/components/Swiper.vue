@@ -1,7 +1,7 @@
 <template>
-  <div class="swiper-wrapper">
+  <div class="swiper-wrapper bg-[#0a0a0a]">
     <swiper-container
-      class="swiper-container"
+      class="swiper-container rounded-lg"
       :navigation="true"
       :pagination="{
         type: 'progressbar',
@@ -13,7 +13,7 @@
       <swiper-slide
         v-for="(item, index) in mediaItems"
         :key="index"
-        class="h-dvh flex items-center justify-center"
+        class="flex items-center justify-center"
       >
         <template v-if="item.type === 'video'">
           <VideoPlayer
@@ -24,7 +24,7 @@
           />
         </template>
         <template v-else-if="item.type === 'image'">
-          <img :src="item.url" class="rounded-lg" />
+          <img :src="item.url" />
         </template>
       </swiper-slide>
     </swiper-container>
@@ -68,13 +68,13 @@ onMounted(() => {
 
 <style>
 :root {
-  --swiper-pagination-color: #000;
-  --swiper-navigation-color: #000;
+  --swiper-pagination-color: #0a0a0a;
+  --swiper-navigation-color: #fff;
 }
 
 .intro-slide-visible.show-unmute-tip:before {
   content: "";
-  @apply absolute top-0 left-0 w-full h-full bg-black/20 z-30;
+  @apply absolute top-0 left-0 w-full h-full bg-[#0a0a0a]/20 z-30;
 }
 
 .intro-slide-visible .swiper-container::part(button-prev),
@@ -88,7 +88,7 @@ onMounted(() => {
 }
 
 .swiper-container::part(pagination) {
-  @apply md:w-[768px] top-[calc(50%+150px)] md:top-[calc(50%+216px)] left-1/2 transform -translate-x-1/2;
+  @apply md:w-[768px] top-[calc(50%+146px)] md:top-[calc(50%+212px)] left-1/2 transform -translate-x-1/2;
 }
 
 swiper-slide video,
