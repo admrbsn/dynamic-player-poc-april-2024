@@ -24,7 +24,7 @@
     </button>
     <div class="tooltip hidden absolute bottom-16 right-[calc(-50%+12px)] w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
       <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
-      <p class="opacity-75">Please unmute your device to start enjoying this Tribute with sound. Thanks for understanding!</p>
+      <p class="mb-1 opacity-75">Please unmute your device to start enjoying this Tribute with sound. Thanks for understanding!</p>
       <div class="arrow-up absolute -bottom-2 right-4 mx-auto w-0 h-0 border-l-[0.5rem] border-l-transparent border-r-[0.5rem] border-r-transparent border-t-[0.5rem] border-t-white"></div>
     </div>
     <div

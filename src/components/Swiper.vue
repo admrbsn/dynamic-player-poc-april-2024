@@ -73,7 +73,7 @@ onMounted(() => {
 
 .intro-slide-visible.show-unmute-tip:before {
   content: "";
-  @apply absolute top-0 left-0 w-full h-full bg-[#0a0a0a]/20 z-30;
+  @apply absolute top-0 left-0 w-full h-full bg-[#0a0a0a]/50 z-30;
 }
 
 .intro-slide-visible .swiper-container::part(button-prev),

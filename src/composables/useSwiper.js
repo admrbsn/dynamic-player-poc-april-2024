@@ -1,5 +1,5 @@
 import { mediaItems } from '../mediaItems.js';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { register } from 'swiper/element/bundle';
 
 register();
@@ -87,7 +87,7 @@ export default function useSwiper() {
 
   const toggleMute = () => {
     isMuted.value = !isMuted.value;
-    audioElement.muted = !audioElement.muted;
+    audioElement.muted = isMuted.value;
 
     if (isMobile.value) {
       const directSwiperWrapper = document.querySelector('.swiper-wrapper');
@@ -116,6 +116,9 @@ export default function useSwiper() {
         startImageTimer(currentMediaIndex.value, remainingTime.value);
       }
       isPlaying.value = !isPlaying.value;
+    }
+    if (audioElement.muted) {
+      audioElement.muted = false;
     }
     if (isPlaying.value && currentMediaIndex.value >= 1) {
       audioElement.play().catch((e) => console.error("Error playing audio:", e));
@@ -166,6 +169,10 @@ export default function useSwiper() {
         }
     }, stepTime);
   };
+
+  onMounted(() => {
+    audioElement.muted = true;
+  });
 
   return {
     mediaItems,
