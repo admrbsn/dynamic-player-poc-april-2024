@@ -23,47 +23,56 @@ export default function useSwiper() {
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
 
-    adjustAudioVolumeForSlide(mediaItems[newIndex].type);
+    // Adjust the audio volume for the new slide type.
+    adjustAudioVolumeForSlide(newMedia.type);
+    
+    // Ensure the swiper continues to play unless specifically paused by the user.
     isPlaying.value = true;
 
     if (newIndex >= 1) {
-      if (isPlaying.value) {
-        audioElement.play().catch((e) => console.error("Error playing audio:", e));
-      }
+        // Attempt to play audio for slides after the first one.
+        // This play attempt is part of the solution to make audio work on mobile.
+        if (isPlaying.value) {
+            setTimeout(() => {
+                audioElement.play().catch((e) => console.error("Error playing audio:", e));
+            }, 100); // A short delay to ensure synchronization with user actions
+        }
     } else {
-      audioElement.pause();
-      audioElement.currentTime = 0;
+        // If the user navigates back to the first slide, reset and pause the audio.
+        audioElement.pause();
+        audioElement.currentTime = 0;
     }
   
+    // Reset the auto-advance timer if it's active.
     if (autoAdvanceTimer.value) {
-      clearInterval(autoAdvanceTimer.value);
-      autoAdvanceTimer.value = null;
+        clearInterval(autoAdvanceTimer.value);
+        autoAdvanceTimer.value = null;
     }
 
+    // Handle slide-specific behavior, such as starting timers for image slides
+    // or handling playback for video slides.
     if (newMedia.type === 'image') {
-      const newMediaDuration = newMedia.duration || 5;
-      countdown.value = newMediaDuration;
-      remainingTime.value = newMediaDuration;
-      startImageTimer(newIndex);
+        const newMediaDuration = newMedia.duration || 5;
+        countdown.value = newMediaDuration;
+        remainingTime.value = newMediaDuration;
+        startImageTimer(newIndex);
     } else if (newMedia.type === 'video') {
-      countdown.value = 0;
-      remainingTime.value = 0;
+        countdown.value = 0;
+        remainingTime.value = 0;
+        // Since this is a video slide, ensure the video is played.
+        const newVideo = media.value[newIndex];
+        newVideo.play().catch((error) => console.error('Error playing the video:', error));
     }
   
+    // Pause and reset any previously playing videos to ensure only the current video is playing.
     media.value.forEach((mediaElement, index) => {
-      if (mediaItems[index].type === 'video') {
-        mediaElement.pause();
-        mediaElement.currentTime = 0;
-      }
+        if (mediaItems[index].type === 'video' && index !== newIndex) {
+            mediaElement.pause();
+            mediaElement.currentTime = 0;
+        }
     });
-  
-    if (newMedia.type === 'video') {
-      const newVideo = media.value[newIndex];
-      newVideo
-        .play()
-        .catch((error) => console.error('Error playing the video:', error));
-    }
-  };  
+};
+
 
   const onProgress = (e) => {
     const directSwiperWrapper = document.querySelector('.swiper-wrapper');
@@ -100,30 +109,31 @@ export default function useSwiper() {
   const togglePlayPause = () => {
     const currentItem = mediaItems[currentMediaIndex.value];
 
-    if (currentItem.type === 'video') {
-      const currentVideo = media.value[currentMediaIndex.value];
-      isPlaying.value = !isPlaying.value;
-      if (isPlaying.value) {
-        currentVideo.play();
-      } else {
-        currentVideo.pause();
-      }
-    } else if (currentItem.type === 'image') {
-      if (isPlaying.value) {
-        clearTimeout(autoAdvanceTimer.value);
-        autoAdvanceTimer.value = null;
-      } else {
-        startImageTimer(currentMediaIndex.value, remainingTime.value);
-      }
-      isPlaying.value = !isPlaying.value;
-    }
-    if (audioElement.muted) {
-      audioElement.muted = false;
-    }
+    isPlaying.value = !isPlaying.value;
+
     if (isPlaying.value && currentMediaIndex.value >= 1) {
+      if (audioElement.muted) {
+        audioElement.muted = false;
+      }
       audioElement.play().catch((e) => console.error("Error playing audio:", e));
     } else {
       audioElement.pause();
+    }
+
+    if (currentItem.type === 'video') {
+      const currentVideo = media.value[currentMediaIndex.value];
+      if (isPlaying.value) {
+          currentVideo.play();
+      } else {
+          currentVideo.pause();
+      }
+    } else if (currentItem.type === 'image') {
+      if (!isPlaying.value) {
+          clearTimeout(autoAdvanceTimer.value);
+          autoAdvanceTimer.value = null;
+      } else {
+          startImageTimer(currentMediaIndex.value, remainingTime.value);
+      }
     }
   };
 
