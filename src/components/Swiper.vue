@@ -67,7 +67,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --swiper-pagination-color: #0a0a0a;
+  --swiper-pagination-color: #ff6e6c;
   --swiper-navigation-color: #fff;
 }
 
