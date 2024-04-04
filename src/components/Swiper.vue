@@ -6,7 +6,6 @@
       :pagination="{
         type: 'progressbar',
       }"
-      :effect="'fade'"
       @swiperslidechange="onSlideChange"
       @swiperprogress="onProgress"
     >
