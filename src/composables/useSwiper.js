@@ -58,6 +58,13 @@ export default function useSwiper() {
     gainNode.gain.value = volume;
   }
 
+  const resumeAudioContext = async () => {
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+    console.log("resume audio context")
+  };
+
   const media = ref([]);
   const currentMediaIndex = ref(0);
   const isPlaying = ref(false);
@@ -249,5 +256,6 @@ export default function useSwiper() {
     onProgress,
     toggleMute,
     audioCtxState,
+    resumeAudioContext,
   };
 }

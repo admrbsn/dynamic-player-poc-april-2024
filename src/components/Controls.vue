@@ -84,7 +84,6 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['toggle', 'toggleMute']);
-const isHovering = ref(false);
 const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
 const muteIconComponent = computed(() => props.isVideoMuted ? SpeakerXMarkIcon : SpeakerWaveIcon);
 
@@ -94,6 +93,8 @@ const togglePlayPause = () => {
 
 const toggleMute = () => {
   emits('requestMute');
+  emits('requestResumeAudioContext');
+  console.log("toggle mute")
 };
 </script>
 

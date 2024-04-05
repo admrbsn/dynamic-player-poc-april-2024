@@ -37,6 +37,7 @@
     :isVideoMuted="isMuted"
     @requestPlayPause="togglePlayPause"
     @requestMute="toggleMute"
+    @requestResumeAudioContext="resumeAudioContext"
   />
 </template>
 
@@ -61,6 +62,7 @@ const {
   onProgress,
   toggleMute,
   audioCtxState,
+  resumeAudioContext,
 } = useSwiper();
 
 onMounted(() => {
