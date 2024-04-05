@@ -5,6 +5,7 @@ import { register } from 'swiper/element/bundle';
 register();
 
 export default function useSwiper() {
+  // TODO: convert to WebAudio
   const audioElement = new Audio('https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3');
   const media = ref([]);
   const currentMediaIndex = ref(0);
@@ -162,6 +163,7 @@ export default function useSwiper() {
 
   onMounted(() => {
     audioElement.muted = isMobile.value;
+    audioElement.preload = 'auto';
   });
 
   return {
