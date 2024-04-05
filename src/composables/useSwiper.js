@@ -4,6 +4,7 @@ import { register } from 'swiper/element/bundle';
 
 register();
 
+
 export default function useSwiper() {
   const audioElement = new Audio('https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3');
   const media = ref([]);
