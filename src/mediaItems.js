@@ -5,6 +5,10 @@ export const mediaItems = [
   },
   {
     type: 'video',
+    url: 'https://player.vimeo.com/external/834176404.m3u8?s=625cd0be4dea8efe8130fe2635ca697b7520aad1',
+  },
+  {
+    type: 'video',
     url: 'https://player.vimeo.com/external/832639376.m3u8?s=2d8046d016c0c46c925f64d4c1e61bc148dacd46',
   },
   { type: 'image', url: 'https://picsum.photos/id/27/3264/1836', duration: 8 },
