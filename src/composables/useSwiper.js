@@ -23,34 +23,25 @@ export default function useSwiper() {
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
 
-    // Adjust the audio volume for the new slide type.
     adjustAudioVolumeForSlide(newMedia.type);
-    
-    // Ensure the swiper continues to play unless specifically paused by the user.
     isPlaying.value = true;
 
     if (newIndex >= 1) {
-        // Attempt to play audio for slides after the first one.
-        // This play attempt is part of the solution to make audio work on mobile.
         if (isPlaying.value) {
             setTimeout(() => {
                 audioElement.play().catch((e) => console.error("Error playing audio:", e));
-            }, 100); // A short delay to ensure synchronization with user actions
+            }, 100);
         }
     } else {
-        // If the user navigates back to the first slide, reset and pause the audio.
         audioElement.pause();
         audioElement.currentTime = 0;
     }
   
-    // Reset the auto-advance timer if it's active.
     if (autoAdvanceTimer.value) {
         clearInterval(autoAdvanceTimer.value);
         autoAdvanceTimer.value = null;
     }
 
-    // Handle slide-specific behavior, such as starting timers for image slides
-    // or handling playback for video slides.
     if (newMedia.type === 'image') {
         const newMediaDuration = newMedia.duration || 5;
         countdown.value = newMediaDuration;
@@ -59,20 +50,17 @@ export default function useSwiper() {
     } else if (newMedia.type === 'video') {
         countdown.value = 0;
         remainingTime.value = 0;
-        // Since this is a video slide, ensure the video is played.
         const newVideo = media.value[newIndex];
         newVideo.play().catch((error) => console.error('Error playing the video:', error));
     }
   
-    // Pause and reset any previously playing videos to ensure only the current video is playing.
     media.value.forEach((mediaElement, index) => {
         if (mediaItems[index].type === 'video' && index !== newIndex) {
             mediaElement.pause();
             mediaElement.currentTime = 0;
         }
     });
-};
-
+  };
 
   const onProgress = (e) => {
     const directSwiperWrapper = document.querySelector('.swiper-wrapper');
@@ -165,19 +153,11 @@ export default function useSwiper() {
   };
 
   const adjustAudioVolumeForSlide = (slideType) => {
-    const targetVolume = slideType === 'image' ? 1.0 : 0.1;
-    const fadeDuration = 500;
-    const stepTime = 10;
-    const stepSize = (targetVolume - audioElement.volume) / (fadeDuration / stepTime);
-
-    const fadeAudio = setInterval(() => {
-        if ((stepSize > 0 && audioElement.volume < targetVolume) || (stepSize < 0 && audioElement.volume > targetVolume)) {
-            audioElement.volume = Math.min(1, Math.max(0, audioElement.volume + stepSize));
-        } else {
-            audioElement.volume = targetVolume;
-            clearInterval(fadeAudio);
-        }
-    }, stepTime);
+    if (slideType === 'image') {
+      audioElement.volume = 1.0;
+    } else if (slideType === 'video') {
+      audioElement.volume = 0.1;
+    }
   };
 
   onMounted(() => {
