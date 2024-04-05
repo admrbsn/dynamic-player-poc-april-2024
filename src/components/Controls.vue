@@ -18,9 +18,9 @@
     >
       <component :is="muteIconComponent" class="w-6 h-6 text-white" />
     </button>
-    <div class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-full max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
+    <div class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
       <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
-      <p class="mb-1 opacity-75">Please unmute your device to start enjoying this Tribute.</p>
+      <p class="mb-1 opacity-75 leading-snug">Please unmute your device to start enjoying this Tribute.</p>
     </div>
     <div
       v-if="countdown > 0"
