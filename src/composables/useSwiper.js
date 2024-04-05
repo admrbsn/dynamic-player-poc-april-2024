@@ -1,5 +1,5 @@
 import { mediaItems } from "../mediaItems.js";
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
 
 register();
@@ -58,12 +58,17 @@ export default function useSwiper() {
     gainNode.gain.value = volume;
   }
 
+  const audioCtxState = ref(audioCtx.state);
+
   const resumeAudioContext = async () => {
     if (audioCtx.state === 'suspended') {
       await audioCtx.resume();
+      audioCtxState.value = audioCtx.state; // Manually update the reactive property
     }
-    console.log("resume audio context")
+    console.log("audio ctx state", audioCtxState.value); // Now reactive
+    console.log("audio ctx state direct", audioCtx.state); // Always accurate
   };
+  
 
   const media = ref([]);
   const currentMediaIndex = ref(0);
@@ -77,7 +82,6 @@ export default function useSwiper() {
     ),
   );
   const isMuted = ref(isMobile.value);
-  const audioCtxState = computed(() => audioCtx.state);
   const hasSlideChanged = ref(false);
 
   const onSlideChange = (event) => {
@@ -241,6 +245,7 @@ export default function useSwiper() {
       // Mute audio by default on mobile
       if (isMobile.value) isMuted.value = true;
     });
+    console.log(audioCtxState.value)
   });
 
   return {
