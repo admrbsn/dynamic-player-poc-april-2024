@@ -1,19 +1,74 @@
-import { mediaItems } from '../mediaItems.js';
-import { ref, onMounted } from 'vue';
-import { register } from 'swiper/element/bundle';
+import { mediaItems } from "../mediaItems.js";
+import { ref, onMounted } from "vue";
+import { register } from "swiper/element/bundle";
 
 register();
 
 export default function useSwiper() {
-  // TODO: convert to WebAudio
-  const audioElement = new Audio('https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3');
+  // Web Audio API setup
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  let audioSource = null;
+  let audioBuffer = null;
+  let isAudioPlaying = false;
+  const gainNode = audioCtx.createGain();
+  gainNode.connect(audioCtx.destination);
+
+  // Load audio into buffer
+  async function loadAudio(url) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    // Autoplay on desktop after loading, if not on mobile
+    if (!isMobile.value) playAudio();
+  }
+
+  // Play audio
+  function playAudio() {
+    if (audioBuffer && !isAudioPlaying && currentMediaIndex.value >= 1) {
+      if (audioSource) {
+        audioSource.disconnect(); // Ensure clean start
+      }
+      audioSource = audioCtx.createBufferSource();
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(gainNode);
+      audioSource.loop = true;
+      // Set initial volume based on mute state and media type
+      gainNode.gain.value = isMuted.value
+        ? 0
+        : mediaItems[currentMediaIndex.value].type === "image"
+          ? 1.0
+          : 0.1;
+      audioSource.start(0);
+      isAudioPlaying = true; // Update flag
+      audioSource.onended = () => (isAudioPlaying = false); // Reset flag when audio ends
+    }
+  }
+
+  // Stop audio
+  function stopAudio() {
+    if (isAudioPlaying) {
+      audioSource.stop();
+      audioSource.disconnect();
+      isAudioPlaying = false; // Update flag
+    }
+  }
+
+  // Adjust audio volume
+  function adjustVolume(volume) {
+    gainNode.gain.value = volume;
+  }
+
   const media = ref([]);
   const currentMediaIndex = ref(0);
   const isPlaying = ref(false);
   const autoAdvanceTimer = ref(null);
   const countdown = ref(0);
   const remainingTime = ref(0);
-  const isMobile = ref(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+  const isMobile = ref(
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    ),
+  );
   const isMuted = ref(isMobile.value);
   const hasSlideChanged = ref(false);
 
@@ -24,59 +79,67 @@ export default function useSwiper() {
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
 
-    adjustAudioVolumeForSlide(newMedia.type);
-    isPlaying.value = true;
+    // Adjust the audio volume based on the slide type directly using the Web Audio API
+    const volume = newMedia.type === "image" ? 1.0 : 0.1; // Set volume based on slide type
+    if (isAudioPlaying) {
+      adjustVolume(volume); // Directly adjust volume if audio is playing
+    }
 
+    // This condition ensures audio plays only when the swiper index is beyond the first slide
     if (newIndex >= 1) {
-        if (isPlaying.value) {
-            setTimeout(() => {
-                audioElement.play().catch((e) => console.error("Error playing audio:", e));
-            }, 100);
-        }
+      playAudio();
     } else {
-        audioElement.pause();
-        audioElement.currentTime = 0;
-    }
-  
-    if (autoAdvanceTimer.value) {
-        clearInterval(autoAdvanceTimer.value);
-        autoAdvanceTimer.value = null;
+      // Optionally, stop the audio if you want to reset it when navigating back to the first slide
+      stopAudio();
     }
 
-    if (newMedia.type === 'image') {
-        const newMediaDuration = newMedia.duration || 5;
-        countdown.value = newMediaDuration;
-        remainingTime.value = newMediaDuration;
-        startImageTimer(newIndex);
-    } else if (newMedia.type === 'video') {
-        countdown.value = 0;
-        remainingTime.value = 0;
-        const newVideo = media.value[newIndex];
-        newVideo.play().catch((error) => console.error('Error playing the video:', error));
+    // Clear any existing auto-advance timer
+    if (autoAdvanceTimer.value) {
+      clearInterval(autoAdvanceTimer.value);
+      autoAdvanceTimer.value = null;
     }
-  
+
+    // Start a new timer for image slides
+    if (newMedia.type === "image") {
+      const newMediaDuration = newMedia.duration || 5;
+      countdown.value = newMediaDuration;
+      remainingTime.value = newMediaDuration;
+      startImageTimer(newIndex);
+    }
+    // For video slides, ensure video playback and manage countdown/reset
+    else if (newMedia.type === "video") {
+      countdown.value = 0;
+      remainingTime.value = 0;
+      // Directly play the video associated with the new slide
+      const newVideo = media.value[newIndex];
+      newVideo
+        .play()
+        .catch((error) => console.error("Error playing the video:", error));
+    }
+
+    // Pause and reset playback for any videos that are not currently active
     media.value.forEach((mediaElement, index) => {
-        if (mediaItems[index].type === 'video' && index !== newIndex) {
-            mediaElement.pause();
-            mediaElement.currentTime = 0;
-        }
+      if (mediaItems[index].type === "video" && index !== newIndex) {
+        mediaElement.pause();
+        mediaElement.currentTime = 0;
+      }
     });
   };
 
   const onProgress = (e) => {
-    const directSwiperWrapper = document.querySelector('.swiper-wrapper');
+    const directSwiperWrapper = document.querySelector(".swiper-wrapper");
 
     if (directSwiperWrapper) {
       if (!hasSlideChanged.value) {
         directSwiperWrapper.classList.toggle(
-          'intro-slide-visible',
-          e.detail[1] === 0
+          "intro-slide-visible",
+          e.detail[1] === 0,
         );
 
         if (isMobile.value) {
           directSwiperWrapper.classList.toggle(
-            'show-unmute-tip',
-            e.detail[1] === 0
+            "show-unmute-tip",
+            e.detail[1] === 0,
           );
         }
       }
@@ -85,12 +148,18 @@ export default function useSwiper() {
 
   const toggleMute = () => {
     isMuted.value = !isMuted.value;
-    audioElement.muted = isMuted.value;
+
+    // Determine the correct volume based on the current slide's media type when unmuting
+    const volumeWhenUnmuted =
+      mediaItems[currentMediaIndex.value].type === "image" ? 1.0 : 0.1;
+
+    // Adjust volume based on mute state and current media type
+    adjustVolume(isMuted.value ? 0 : volumeWhenUnmuted);
 
     if (isMobile.value) {
-      const directSwiperWrapper = document.querySelector('.swiper-wrapper');
+      const directSwiperWrapper = document.querySelector(".swiper-wrapper");
       if (directSwiperWrapper) {
-        directSwiperWrapper.classList.toggle('show-unmute-tip', isMuted.value);
+        directSwiperWrapper.classList.toggle("show-unmute-tip", isMuted.value);
       }
     }
   };
@@ -100,35 +169,39 @@ export default function useSwiper() {
 
     isPlaying.value = !isPlaying.value;
 
-    if (isPlaying.value && currentMediaIndex.value >= 1) {
-      if (audioElement.muted) {
-        audioElement.muted = false;
-      }
-      audioElement.play().catch((e) => console.error("Error playing audio:", e));
+    // Instead of stopping and starting the audio, adjust the gain to "mute" and "unmute."
+    if (isPlaying.value) {
+      // Restore volume based on current media type without restarting the audio
+      const volume = currentItem.type === "image" ? 1.0 : 0.1;
+      adjustVolume(isMuted.value ? 0 : volume);
     } else {
-      audioElement.pause();
+      // Effectively "mute" the audio by setting its volume to 0
+      adjustVolume(0);
     }
 
-    if (currentItem.type === 'video') {
+    // Video playback control remains the same
+    if (currentItem.type === "video") {
       const currentVideo = media.value[currentMediaIndex.value];
       if (isPlaying.value) {
-          currentVideo.play();
+        currentVideo.play();
       } else {
-          currentVideo.pause();
+        currentVideo.pause();
       }
-    } else if (currentItem.type === 'image') {
+    }
+    // Image timer control remains the same
+    else if (currentItem.type === "image") {
       if (!isPlaying.value) {
-          clearTimeout(autoAdvanceTimer.value);
-          autoAdvanceTimer.value = null;
+        clearTimeout(autoAdvanceTimer.value);
+        autoAdvanceTimer.value = null;
       } else {
-          startImageTimer(currentMediaIndex.value, remainingTime.value);
+        startImageTimer(currentMediaIndex.value, remainingTime.value);
       }
     }
   };
 
   const handleMediaEnd = (index) => {
     if (index < mediaItems.length - 1) {
-      const swiper = document.querySelector('.swiper-container').swiper;
+      const swiper = document.querySelector(".swiper-container").swiper;
       swiper.slideNext();
       currentMediaIndex.value = swiper.activeIndex;
     }
@@ -153,17 +226,13 @@ export default function useSwiper() {
     }, 1000);
   };
 
-  const adjustAudioVolumeForSlide = (slideType) => {
-    if (slideType === 'image') {
-      audioElement.volume = 1.0;
-    } else if (slideType === 'video') {
-      audioElement.volume = 0.1;
-    }
-  };
-
   onMounted(() => {
-    audioElement.muted = isMobile.value;
-    audioElement.preload = 'auto';
+    loadAudio(
+      "https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3",
+    ).then(() => {
+      // Mute audio by default on mobile
+      if (isMobile.value) isMuted.value = true;
+    });
   });
 
   return {
@@ -177,6 +246,6 @@ export default function useSwiper() {
     togglePlayPause,
     onSlideChange,
     onProgress,
-    toggleMute, 
+    toggleMute,
   };
 }
