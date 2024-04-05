@@ -1,11 +1,33 @@
 <template>
+  <div
+    v-if="isLoading"
+    class="
+      loader
+      absolute
+      top-[calc(50%-24px)]
+      left-[calc(50%-24px)]
+      transform
+      -translate-y-1/2
+      -translate-x-1/2
+      w-12
+      h-12
+      rounded-full
+      border-4
+      border-white
+      border-b-transparent
+      animate-spin
+    "
+  >
+  </div>
   <video
-    preload="auto"
-    :src="url"
-    @ended="handleMediaEnd"
     ref="videoRef"
+    preload="auto"
+    class="bg-black"
     playsinline
+    :src="url"
     :muted="isVideoMuted"
+    @loadeddata="videoLoaded"
+    @ended="handleMediaEnd"
   ></video>
 </template>
 
@@ -22,6 +44,7 @@ const props = defineProps({
 
 const emits = defineEmits(['mediaEnd']);
 const videoRef = ref(null);
+const isLoading = ref(true);
 
 const setupHls = () => {
   if (Hls.isSupported()) {
@@ -31,10 +54,11 @@ const setupHls = () => {
   } else if (videoRef.value.canPlayType('application/vnd.apple.mpegurl')) {
     videoRef.value.src = props.url;
   }
+  isLoading.value = true;
 };
 
-const toggleMute = () => {
-  emits('requestToggleMute');
+const videoLoaded = () => {
+  isLoading.value = false;
 };
 
 const handleMediaEnd = () => {
@@ -45,3 +69,20 @@ onMounted(() => {
   setupHls();
 });
 </script>
+
+<style>
+.loader {
+  animation: rotation 1s linear infinite;
+  border-bottom-color: #ff6e6c;
+
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
