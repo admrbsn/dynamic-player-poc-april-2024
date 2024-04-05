@@ -71,10 +71,13 @@ onMounted(() => {
 </script>
 
 <style>
+.intro-slide-visible video {
+  @apply bg-[#78cdbf];
+}
+
 .loader {
   animation: rotation 1s linear infinite;
   border-bottom-color: #ff6e6c;
-
 }
 
 @keyframes rotation {

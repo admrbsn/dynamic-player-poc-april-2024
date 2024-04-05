@@ -14,14 +14,13 @@
   >
     <button
       @click="toggleMute"
-      class="absolute right-[calc(-50%+12px)] md:right-3 bottom-3 py-1.5 px-3 rounded bg-[#0a0a0a]/75 text-white z-30 hover:bg-[#0a0a0a] transition-opacity"
+      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-3 bottom-3 py-1.5 px-3 rounded bg-[#0a0a0a]/75 text-white z-30 hover:bg-[#0a0a0a] transition-opacity"
     >
       <component :is="muteIconComponent" class="w-6 h-6 text-white" />
     </button>
-    <div class="tooltip hidden absolute bottom-16 right-[calc(-50%+12px)] w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
+    <div class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-full max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
       <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
       <p class="mb-1 opacity-75">Please unmute your device to start enjoying this Tribute.</p>
-      <div class="arrow-up absolute -bottom-2 right-4 mx-auto w-0 h-0 border-l-[0.5rem] border-l-transparent border-r-[0.5rem] border-r-transparent border-t-[0.5rem] border-t-white"></div>
     </div>
     <div
       v-if="countdown > 0"
@@ -49,6 +48,7 @@
     <button
       @click="togglePlayPause"
       class="
+        toggle-play-pause
         absolute
         bottom-3
         left-[calc(-50%+12px)]
@@ -100,5 +100,29 @@ const toggleMute = () => {
 <style>
 .swiper-wrapper.intro-slide-visible.show-unmute-tip + div > .tooltip {
   @apply block !important;
+}
+
+.swiper-wrapper.intro-slide-visible.show-unmute-tip + div > .toggle-mute {
+  animation: pulse 1.5s infinite;
+  @apply block !important;
+}
+
+.swiper-wrapper.intro-slide-visible.show-unmute-tip + div .toggle-play-pause {
+  @apply opacity-60 pointer-events-none !important;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
 }
 </style>
