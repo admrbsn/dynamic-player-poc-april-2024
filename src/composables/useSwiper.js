@@ -58,17 +58,12 @@ export default function useSwiper() {
     gainNode.gain.value = volume;
   }
 
-  const audioCtxState = ref(audioCtx.state);
-
+  // Resume audio context for mobile
   const resumeAudioContext = async () => {
     if (audioCtx.state === 'suspended') {
       await audioCtx.resume();
-      audioCtxState.value = audioCtx.state; // Manually update the reactive property
     }
-    console.log("audio ctx state", audioCtxState.value); // Now reactive
-    console.log("audio ctx state direct", audioCtx.state); // Always accurate
   };
-  
 
   const media = ref([]);
   const currentMediaIndex = ref(0);
@@ -245,7 +240,6 @@ export default function useSwiper() {
       // Mute audio by default on mobile
       if (isMobile.value) isMuted.value = true;
     });
-    console.log(audioCtxState.value)
   });
 
   return {
@@ -260,7 +254,6 @@ export default function useSwiper() {
     onSlideChange,
     onProgress,
     toggleMute,
-    audioCtxState,
     resumeAudioContext,
   };
 }

@@ -94,7 +94,6 @@ const togglePlayPause = () => {
 const toggleMute = () => {
   emits('requestMute');
   emits('requestResumeAudioContext');
-  console.log("toggle mute")
 };
 </script>
 

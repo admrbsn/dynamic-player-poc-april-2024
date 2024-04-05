@@ -1,7 +1,4 @@
 <template>
-  <p>Is Playing: {{ isPlaying }}</p>
-    <p>Is Muted: {{ isMuted }}</p>
-    <p>Audio Context State: {{ audioCtxState }}</p>
   <div class="swiper-wrapper bg-[#0a0a0a]">
     <swiper-container
       class="swiper-container rounded-lg"
@@ -61,7 +58,6 @@ const {
   onSlideChange,
   onProgress,
   toggleMute,
-  audioCtxState,
   resumeAudioContext,
 } = useSwiper();
 
