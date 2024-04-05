@@ -1,5 +1,5 @@
 import { mediaItems } from "../mediaItems.js";
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
 
 register();
@@ -70,6 +70,7 @@ export default function useSwiper() {
     ),
   );
   const isMuted = ref(isMobile.value);
+  const audioCtxState = computed(() => audioCtx.state);
   const hasSlideChanged = ref(false);
 
   const onSlideChange = (event) => {
@@ -247,5 +248,6 @@ export default function useSwiper() {
     onSlideChange,
     onProgress,
     toggleMute,
+    audioCtxState,
   };
 }
