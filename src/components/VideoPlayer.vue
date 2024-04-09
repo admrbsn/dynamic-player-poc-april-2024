@@ -8,6 +8,9 @@
     preload="auto"
     class="w-full h-full object-cover bg-black"
     playsinline
+    controls
+    disablepictureinpicture
+    controlslist="nodownload noplaybackrate"
     :src="url"
     :muted="isVideoMuted"
     @loadeddata="videoLoaded"
@@ -64,6 +67,18 @@ onMounted(() => {
 .loader {
   animation: rotation 1s linear infinite;
   border-bottom-color: #ff6e6c;
+}
+
+/* webkit video controls */
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-toggle-closed-captions-button,
+video::-webkit-media-controls-volume-slider {
+  @apply hidden;
+}
+video::-webkit-media-controls-timeline {
+  @apply mr-12;
 }
 
 @keyframes rotation {

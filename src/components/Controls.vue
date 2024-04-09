@@ -4,7 +4,7 @@
   >
     <button
       @click="toggleMute"
-      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-3 bottom-3 py-1.5 px-3 rounded bg-[#0a0a0a]/75 text-white z-30 hover:bg-[#0a0a0a] transition-opacity"
+      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-0.5 bottom-1 py-1.5 px-3 rounded bg-transparent text-white z-30"
     >
       <component :is="muteIconComponent" class="w-6 h-6 text-white" />
     </button>
