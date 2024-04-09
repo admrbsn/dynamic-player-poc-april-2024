@@ -49,8 +49,6 @@ function stopAudio() {
 // Adjust audio volume
 function adjustVolume(volume) {
   gainNode.gain.value = volume;
-  console.log(`Setting volume to: ${volume}`);
-
 }
 
 // Resume audio context for mobile
