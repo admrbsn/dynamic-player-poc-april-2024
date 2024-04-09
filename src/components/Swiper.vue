@@ -1,14 +1,16 @@
 <template>
   <div class="swiper-wrapper bg-[#0a0a0a]">
+    <!-- Main Swiper -->
     <swiper-container
       class="swiper-container rounded-lg"
       :navigation="true"
+      :thumbs="{ swiper: '.thumbs-swiper' }"
       @swiperslidechange="onSlideChange"
       @swiperprogress="onProgress"
     >
       <swiper-slide
         v-for="(item, index) in mediaItems"
-        :key="index"
+        :key="`main-${index}`"
         class="flex items-center justify-center"
       >
         <div class="w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto">
@@ -27,6 +29,22 @@
         </div>
       </swiper-slide>
     </swiper-container>
+    <!-- Thumbnails Swiper -->
+    <swiper-container
+      class="thumbs-swiper w-full md:w-[768px] mt-2"
+      :slides-per-view="6"
+      :space-between="8"
+      :free-mode="true"
+      :watch-slides-progress="true"
+    >
+      <swiper-slide
+        v-for="(item, index) in mediaItems"
+        :key="`thumb-${index}`"
+      >
+        <img :src="item.thumbnail" :alt="`Thumbnail ${index+1}`" class="w-full h-full object-cover  cursor-pointer">
+        <div v-if="item.name" class="absolute bottom-0 left-0 w-full h-8 flex items-end pb-1 px-1 bg-gradient-to-t from-black/50 to-transparent text-white text-[10px] font-semibold">{{ item.name }}</div>
+      </swiper-slide>
+    </swiper-container>
   </div>
   <Controls
     :countdown="countdown"
@@ -42,10 +60,12 @@
 import useSwiper from "../composables/useSwiper";
 import VideoPlayer from "./VideoPlayer.vue";
 import Controls from "./Controls.vue";
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
 
 register();
+
+const thumbsSwiper = ref(null);
 
 const {
   handleMediaEnd,
@@ -72,6 +92,7 @@ onMounted(() => {
 <style>
 :root {
   /* add swiper css var overrides */
+  --swiper-navigation-color: #fff;
 }
 
 .intro-slide-visible.show-unmute-tip:before {
