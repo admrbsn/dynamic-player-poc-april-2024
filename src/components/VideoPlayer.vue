@@ -1,24 +1,8 @@
 <template>
   <div
     v-if="isLoading"
-    class="
-      loader
-      absolute
-      top-[calc(50%-24px)]
-      left-[calc(50%-24px)]
-      transform
-      -translate-y-1/2
-      -translate-x-1/2
-      w-12
-      h-12
-      rounded-full
-      border-4
-      border-white
-      border-b-transparent
-      animate-spin
-    "
-  >
-  </div>
+    class="loader absolute top-[calc(50%-24px)] left-[calc(50%-24px)] transform -translate-y-1/2 -translate-x-1/2 w-12 h-12 rounded-full border-4 border-white border-b-transparent animate-spin"
+  ></div>
   <video
     ref="videoRef"
     preload="auto"
@@ -32,9 +16,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import Hls from 'hls.js';
-import { defineProps, defineEmits } from 'vue';
+import { ref, onMounted } from "vue";
+import Hls from "hls.js";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   url: String,
@@ -42,7 +26,7 @@ const props = defineProps({
   isVideoMuted: Boolean,
 });
 
-const emits = defineEmits(['mediaEnd']);
+const emits = defineEmits(["mediaEnd"]);
 const videoRef = ref(null);
 const isLoading = ref(true);
 
@@ -51,7 +35,7 @@ const setupHls = () => {
     const hls = new Hls();
     hls.loadSource(props.url);
     hls.attachMedia(videoRef.value);
-  } else if (videoRef.value.canPlayType('application/vnd.apple.mpegurl')) {
+  } else if (videoRef.value.canPlayType("application/vnd.apple.mpegurl")) {
     videoRef.value.src = props.url;
   }
   isLoading.value = true;
@@ -62,7 +46,7 @@ const videoLoaded = () => {
 };
 
 const handleMediaEnd = () => {
-  emits('mediaEnd', props.index);
+  emits("mediaEnd", props.index);
 };
 
 onMounted(() => {

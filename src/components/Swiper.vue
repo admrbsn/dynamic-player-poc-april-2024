@@ -39,30 +39,32 @@
 </template>
 
 <script setup>
-import useSwiper from '../composables/useSwiper';
-import VideoPlayer from './VideoPlayer.vue';
-import Controls from './Controls.vue';
-import { onMounted } from 'vue';
-import { register } from 'swiper/element/bundle';
+import useSwiper from "../composables/useSwiper";
+import VideoPlayer from "./VideoPlayer.vue";
+import Controls from "./Controls.vue";
+import { onMounted } from "vue";
+import { register } from "swiper/element/bundle";
 
 register();
 
 const {
-  mediaItems,
-  media,
-  isMuted,
-  isPlaying,
-  countdown,
   handleMediaEnd,
   togglePlayPause,
   onSlideChange,
   onProgress,
   toggleMute,
   resumeAudioContext,
+  mediaItems,
+  media,
+  isMuted,
+  isPlaying,
+  countdown,
 } = useSwiper();
 
 onMounted(() => {
-  const mediaElements = document.querySelectorAll('.swiper-container video, .swiper-container img');
+  const mediaElements = document.querySelectorAll(
+    ".swiper-container video, .swiper-container img",
+  );
   media.value = Array.from(mediaElements);
 });
 </script>

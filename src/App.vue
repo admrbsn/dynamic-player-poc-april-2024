@@ -1,5 +1,5 @@
 <script setup>
-import Swiper from './components/Swiper.vue';
+import Swiper from "./components/Swiper.vue";
 </script>
 
 <template>

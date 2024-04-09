@@ -1,70 +1,19 @@
 import { mediaItems } from "../mediaItems.js";
 import { ref, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
+import { useAudio } from "./useAudio";
 
 register();
 
 export default function useSwiper() {
-  // Web Audio API setup
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  let audioSource = null;
-  let audioBuffer = null;
-  let isAudioPlaying = false;
-  const gainNode = audioCtx.createGain();
-  gainNode.connect(audioCtx.destination);
-
-  // Load audio into buffer
-  async function loadAudio(url) {
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-    // Autoplay on desktop after loading, if not on mobile
-    if (!isMobile.value) playAudio();
-  }
-
-  // Play audio
-  function playAudio() {
-    if (audioBuffer && !isAudioPlaying && currentMediaIndex.value >= 1) {
-      if (audioSource) {
-        audioSource.disconnect(); // Ensure clean start
-      }
-      audioSource = audioCtx.createBufferSource();
-      audioSource.buffer = audioBuffer;
-      audioSource.connect(gainNode);
-      audioSource.loop = true;
-      // Set initial volume based on mute state and media type
-      gainNode.gain.value = isMuted.value
-        ? 0
-        : mediaItems[currentMediaIndex.value].type === "image"
-          ? 1.0
-          : 0.1;
-      audioSource.start(0);
-      isAudioPlaying = true; // Update flag
-      audioSource.onended = () => (isAudioPlaying = false); // Reset flag when audio ends
-    }
-  }
-
-  // Stop audio
-  function stopAudio() {
-    if (isAudioPlaying) {
-      audioSource.stop();
-      audioSource.disconnect();
-      isAudioPlaying = false; // Update flag
-    }
-  }
-
-  // Adjust audio volume
-  function adjustVolume(volume) {
-    gainNode.gain.value = volume;
-  }
-
-  // Resume audio context for mobile
-  const resumeAudioContext = async () => {
-    if (audioCtx.state === 'suspended') {
-      await audioCtx.resume();
-    }
-  };
-
+  const {
+    loadAudio,
+    playAudio,
+    stopAudio,
+    adjustVolume,
+    resumeAudioContext,
+    isAudioPlaying,
+  } = useAudio();
   const media = ref([]);
   const currentMediaIndex = ref(0);
   const isPlaying = ref(false);
@@ -86,18 +35,18 @@ export default function useSwiper() {
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
 
-    // Adjust the audio volume based on the slide type directly using the Web Audio API
-    const volume = newMedia.type === "image" ? 1.0 : 0.1; // Set volume based on slide type
-    if (isAudioPlaying) {
-      adjustVolume(volume); // Directly adjust volume if audio is playing
-    }
-
     // This condition ensures audio plays only when the swiper index is beyond the first slide
     if (newIndex >= 1) {
-      playAudio();
+      playAudio(isMuted.value, currentMediaIndex.value, mediaItems);
     } else {
       // Optionally, stop the audio if you want to reset it when navigating back to the first slide
       stopAudio();
+    }
+
+    // Directly adjust volume if audio is playing. Use 'volume' from mediaItems if available.
+    if (isAudioPlaying.value) {
+      const adjustedVolume = newMedia.volume || (newMedia.type === 'image' ? 1.0 : 0.1);
+      adjustVolume(adjustedVolume);
     }
 
     // Clear any existing auto-advance timer
@@ -156,9 +105,9 @@ export default function useSwiper() {
   const toggleMute = () => {
     isMuted.value = !isMuted.value;
 
-    // Determine the correct volume based on the current slide's media type when unmuting
-    const volumeWhenUnmuted =
-      mediaItems[currentMediaIndex.value].type === "image" ? 1.0 : 0.1;
+    // Use the 'volume' property from mediaItems if available.
+    const currentMedia = mediaItems[currentMediaIndex.value];
+    const volumeWhenUnmuted = currentMedia.volume || (currentMedia.type === 'image' ? 1.0 : 0.1);
 
     // Adjust volume based on mute state and current media type
     adjustVolume(isMuted.value ? 0 : volumeWhenUnmuted);
@@ -173,20 +122,14 @@ export default function useSwiper() {
 
   const togglePlayPause = () => {
     const currentItem = mediaItems[currentMediaIndex.value];
-
+  
     isPlaying.value = !isPlaying.value;
-
-    // Instead of stopping and starting the audio, adjust the gain to "mute" and "unmute."
-    if (isPlaying.value) {
-      // Restore volume based on current media type without restarting the audio
-      const volume = currentItem.type === "image" ? 1.0 : 0.1;
-      adjustVolume(isMuted.value ? 0 : volume);
-    } else {
-      // Effectively "mute" the audio by setting its volume to 0
-      adjustVolume(0);
-    }
-
-    // Video playback control remains the same
+  
+    // Adjust the volume to respect the 'volume' property or use default values.
+    const adjustedVolume = currentItem.volume || (currentItem.type === 'image' ? 1.0 : 0.1);
+    adjustVolume(isPlaying.value && !isMuted.value ? adjustedVolume : 0);
+  
+    // Video playback
     if (currentItem.type === "video") {
       const currentVideo = media.value[currentMediaIndex.value];
       if (isPlaying.value) {
@@ -195,7 +138,6 @@ export default function useSwiper() {
         currentVideo.pause();
       }
     }
-    // Image timer control remains the same
     else if (currentItem.type === "image") {
       if (!isPlaying.value) {
         clearTimeout(autoAdvanceTimer.value);
@@ -204,7 +146,7 @@ export default function useSwiper() {
         startImageTimer(currentMediaIndex.value, remainingTime.value);
       }
     }
-  };
+  };  
 
   const handleMediaEnd = (index) => {
     if (index < mediaItems.length - 1) {
@@ -237,7 +179,6 @@ export default function useSwiper() {
     loadAudio(
       "https://storage.googleapis.com/tribute-music-prod/Spring_In_My_Step_128k.mp3",
     ).then(() => {
-      // Mute audio by default on mobile
       if (isMobile.value) isMuted.value = true;
     });
   });

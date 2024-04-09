@@ -1,16 +1,6 @@
 <template>
   <div
-    class="
-      absolute
-      top-0
-      left-1/2
-      transform
-      -translate-x-1/2
-      w-1/2 h-[300px]
-      md:w-[768px] md:h-[432px]
-      bg-transparent
-      z-30
-    "
+    class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/2 h-[300px] md:w-[768px] md:h-[432px] bg-transparent z-30"
   >
     <button
       @click="toggleMute"
@@ -18,64 +8,40 @@
     >
       <component :is="muteIconComponent" class="w-6 h-6 text-white" />
     </button>
-    <div class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30">
+    <div
+      class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30"
+    >
       <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
-      <p class="mb-1 opacity-75 leading-snug">Please unmute your device to start enjoying this Tribute.</p>
+      <p class="mb-1 opacity-75 leading-snug">
+        Please unmute your device to start enjoying this Tribute.
+      </p>
     </div>
     <div
       v-if="countdown > 0"
-      class="
-        absolute
-        top-3
-        right-3
-        w-8
-        h-8
-        flex
-        items-center
-        justify-center
-        mr-[-50%]
-        md:mr-0
-        bg-white
-        text-[#0a0a0a]
-        rounded-full
-        text-xs
-        font-semibold
-        opacity-75
-      "
+      class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center mr-[-50%] md:mr-0 bg-white text-[#0a0a0a] rounded-full text-xs font-semibold opacity-75"
     >
       {{ countdown }}
     </div>
     <button
       @click="togglePlayPause"
-      class="
-        toggle-play-pause
-        absolute
-        bottom-3
-        left-[calc(-50%+12px)]
-        md:left-3
-        z-30
-      "
+      class="toggle-play-pause absolute bottom-3 left-[calc(-50%+12px)] md:left-3 z-30"
     >
       <component
         :is="iconComponent"
-        class="
-          h-9
-          w-14
-          p-2
-          bg-[#0a0a0a]/75
-          text-white
-          rounded
-          hover:bg-[#0a0a0a]
-          transition-opacity
-        "
+        class="h-9 w-14 p-2 bg-[#0a0a0a]/75 text-white rounded hover:bg-[#0a0a0a] transition-opacity"
       />
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { PlayIcon, PauseIcon, SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/vue/24/solid';
+import { ref, computed } from "vue";
+import {
+  PlayIcon,
+  PauseIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from "@heroicons/vue/24/solid";
 
 const props = defineProps({
   countdown: Number,
@@ -83,17 +49,19 @@ const props = defineProps({
   isVideoMuted: Boolean,
 });
 
-const emits = defineEmits(['toggle', 'toggleMute']);
+const emits = defineEmits(["toggle", "toggleMute"]);
 const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
-const muteIconComponent = computed(() => props.isVideoMuted ? SpeakerXMarkIcon : SpeakerWaveIcon);
+const muteIconComponent = computed(() =>
+  props.isVideoMuted ? SpeakerXMarkIcon : SpeakerWaveIcon,
+);
 
 const togglePlayPause = () => {
-  emits('requestPlayPause');
+  emits("requestPlayPause");
 };
 
 const toggleMute = () => {
-  emits('requestMute');
-  emits('requestResumeAudioContext');
+  emits("requestMute");
+  emits("requestResumeAudioContext");
 };
 </script>
 
