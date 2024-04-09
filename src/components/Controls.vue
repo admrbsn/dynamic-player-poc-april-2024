@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1/2 h-[300px] md:w-[768px] md:h-[432px] bg-transparent z-30"
+    class="absolute top-0 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[432px] bg-transparent z-30 flex items-center justify-center mx-auto"
   >
     <button
       @click="toggleMute"
@@ -22,17 +22,25 @@
     >
       {{ countdown }}
     </div>
+    <!-- Commented out the original play-pause button
     <button
       @click="togglePlayPause"
-      class="toggle-play-pause absolute bottom-3 left-[calc(-50%+12px)] md:left-3 z-30"
+      class="toggle-play-pause z-30"
     >
       <component
         :is="iconComponent"
         class="h-9 w-14 p-2 bg-[#0a0a0a]/75 text-white rounded hover:bg-[#0a0a0a] transition-opacity"
       />
     </button>
+    -->
+    <!-- New full-size div for toggling play and pause -->
+    <div
+      @click="togglePlayPause"
+      class="absolute top-0 left-0 w-full h-full z-20 cursor-pointer"
+    ></div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed } from "vue";

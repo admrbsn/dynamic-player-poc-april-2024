@@ -3,9 +3,6 @@
     <swiper-container
       class="swiper-container rounded-lg"
       :navigation="true"
-      :pagination="{
-        type: 'progressbar',
-      }"
       @swiperslidechange="onSlideChange"
       @swiperprogress="onProgress"
     >
@@ -14,17 +11,20 @@
         :key="index"
         class="flex items-center justify-center"
       >
-        <template v-if="item.type === 'video'">
-          <VideoPlayer
-            :url="item.url"
-            :index="index"
-            :isVideoMuted="isMuted"
-            @mediaEnd="handleMediaEnd"
-          />
-        </template>
-        <template v-else-if="item.type === 'image'">
-          <img :src="item.url" />
-        </template>
+        <div class="w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto">
+          <template v-if="item.type === 'video'">
+            <VideoPlayer
+              :url="item.url"
+              :name="item.name"
+              :index="index"
+              :isVideoMuted="isMuted"
+              @mediaEnd="handleMediaEnd"
+            />
+          </template>
+          <template v-else-if="item.type === 'image'">
+            <img :src="item.url" />
+          </template>
+        </div>
       </swiper-slide>
     </swiper-container>
   </div>
@@ -71,8 +71,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --swiper-pagination-color: #ff6e6c;
-  --swiper-navigation-color: #fff;
+  /* add swiper css var overrides */
 }
 
 .intro-slide-visible.show-unmute-tip:before {
@@ -88,14 +87,5 @@ onMounted(() => {
 .swiper-container::part(button-prev),
 .swiper-container::part(button-next) {
   @apply hidden md:flex !important;
-}
-
-.swiper-container::part(pagination) {
-  @apply md:w-[768px] top-[calc(50%+146px)] md:top-[calc(50%+212px)] left-1/2 transform -translate-x-1/2;
-}
-
-swiper-slide video,
-swiper-slide img {
-  @apply w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto object-cover;
 }
 </style>

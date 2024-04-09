@@ -6,13 +6,14 @@
   <video
     ref="videoRef"
     preload="auto"
-    class="bg-black"
+    class="w-full h-full object-cover bg-black"
     playsinline
     :src="url"
     :muted="isVideoMuted"
     @loadeddata="videoLoaded"
     @ended="handleMediaEnd"
   ></video>
+  <div v-if="name" class="absolute bottom-4 ml-4 py-2 px-4 bg-white text-black rounded text-xl font-semibold">{{ name }}</div>
 </template>
 
 <script setup>
@@ -22,6 +23,7 @@ import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   url: String,
+  name: String,
   index: Number,
   isVideoMuted: Boolean,
 });
