@@ -1,10 +1,13 @@
 <template>
   <div
-    class="absolute top-0 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[432px] bg-transparent z-30 flex items-center justify-center mx-auto"
+    class="absolute top-0 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[368px] bg-transparent z-30 flex items-center justify-center mx-auto"
   >
+    <button @click="toggleCaptions" class="toggle-captions absolute right-[calc(-50%+36px)] md:right-10 bottom-1 -mb-16 py-1.5 px-3 rounded bg-transparent z-30">
+      <img :src="captionsIcon" alt="Toggle captions." class="w-6 h-6" />
+    </button>
     <button
       @click="toggleMute"
-      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-0.5 bottom-1 py-1.5 px-3 rounded bg-transparent text-white z-30"
+      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-0.5 bottom-1 -mb-16 py-1.5 px-3 rounded bg-transparent text-white z-30"
     >
       <component :is="muteIconComponent" class="w-6 h-6 text-white" />
     </button>
@@ -36,29 +39,34 @@
     <!-- New full-size div for toggling play and pause -->
     <div
       @click="togglePlayPause"
-      class="absolute top-0 left-0 w-full h-full z-20 cursor-pointer"
+      class="absolute top-0 left-0 w-full h-[calc(100%-64px)] z-20 cursor-pointer"
     ></div>
   </div>
 </template>
 
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import {
-  PlayIcon,
-  PauseIcon,
+  //PlayIcon,
+  //PauseIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
 } from "@heroicons/vue/24/solid";
+import ccOn from '@/assets/cc-on.svg';
+import ccOff from '@/assets/cc-off.svg';
 
 const props = defineProps({
   countdown: Number,
   isPlaying: Boolean,
   isVideoMuted: Boolean,
+  showCaptions: Boolean,
 });
 
 const emits = defineEmits(["toggle", "toggleMute"]);
-const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
+
+//const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
+const captionsIcon = computed(() => props.showCaptions ? ccOn : ccOff);
 const muteIconComponent = computed(() =>
   props.isVideoMuted ? SpeakerXMarkIcon : SpeakerWaveIcon,
 );
@@ -70,6 +78,10 @@ const togglePlayPause = () => {
 const toggleMute = () => {
   emits("requestMute");
   emits("requestResumeAudioContext");
+};
+
+const toggleCaptions = () => {
+  emits("requestToggleCaptions");
 };
 </script>
 

@@ -10,7 +10,7 @@
     playsinline
     controls
     disablepictureinpicture
-    controlslist="nodownload noplaybackrate"
+    controlslist="nofullscreen nodownload noremoteplayback noplaybackrate"
     :src="url"
     :muted="isVideoMuted"
     @loadeddata="videoLoaded"
@@ -20,30 +20,48 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import Hls from "hls.js";
-import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   url: String,
   name: String,
   index: Number,
   isVideoMuted: Boolean,
+  showCaptions: Boolean,
 });
 
 const emits = defineEmits(["mediaEnd"]);
 const videoRef = ref(null);
 const isLoading = ref(true);
+let hls = null;
 
 const setupHls = () => {
   if (Hls.isSupported()) {
-    const hls = new Hls();
+    hls = new Hls();
     hls.loadSource(props.url);
     hls.attachMedia(videoRef.value);
-  } else if (videoRef.value.canPlayType("application/vnd.apple.mpegurl")) {
+    hls.on(Hls.Events.MANIFEST_LOADED, () => {
+      if (props.showCaptions) {
+        enableCaptions();
+      }
+    });
+  } else if (videoRef.value.canPlayType('application/vnd.apple.mpegurl')) {
     videoRef.value.src = props.url;
   }
   isLoading.value = true;
+};
+
+const enableCaptions = () => {
+  const englishTrackIndex = hls.subtitleTracks.findIndex(track => track.lang === 'en-x-autogen');
+  console.log("English track index:", englishTrackIndex);
+  if (englishTrackIndex !== -1) {
+    hls.subtitleTrack = englishTrackIndex;
+  }
+};
+
+const disableCaptions = () => {
+  hls.subtitleTrack = -1;
 };
 
 const videoLoaded = () => {
@@ -53,6 +71,16 @@ const videoLoaded = () => {
 const handleMediaEnd = () => {
   emits("mediaEnd", props.index);
 };
+
+watch(() => props.showCaptions, (newVal) => {
+  if (hls) {
+    if (newVal) {
+      enableCaptions();
+    } else {
+      disableCaptions();
+    }
+  }
+});
 
 onMounted(() => {
   setupHls();
@@ -77,8 +105,11 @@ video::-webkit-media-controls-toggle-closed-captions-button,
 video::-webkit-media-controls-volume-slider {
   @apply hidden;
 }
+video::-webkit-media-controls-panel {
+  @apply -mr-24;
+}
 video::-webkit-media-controls-timeline {
-  @apply mr-12;
+  @apply mr-44;
 }
 
 @keyframes rotation {

@@ -29,7 +29,6 @@ export default function useSwiper() {
   const hasSlideChanged = ref(false);
 
   const onSlideChange = (event) => {
-    console.log("onSlideChange", event.target)
     const swiper = event.target.swiper;
     const newIndex = swiper.activeIndex;
     const newMedia = mediaItems[newIndex];

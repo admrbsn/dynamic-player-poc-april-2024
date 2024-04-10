@@ -2,7 +2,7 @@ export const mediaItems = [
   // Intro
   {
     type: 'video',
-    url: 'https://player.vimeo.com/external/823050002.m3u8?s=3f3e42fa89c4193ccc3e30707faf593eccbb9696',
+    url: 'https://player.vimeo.com/external/823050002.m3u8?s=3f3e42fa89c4193ccc3e30707faf593eccbb9696&logging=false',
     thumbnail: 'https://i.vimeocdn.com/video/1664272767-fb0abb26a7253cb302c6eb5c5e30b6cc2720c3049d4c84a5cf15c6bf2285a5a7-d_640x360',
   },
   {

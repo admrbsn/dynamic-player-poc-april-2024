@@ -20,6 +20,7 @@
               :name="item.name"
               :index="index"
               :isVideoMuted="isMuted"
+              :showCaptions="showCaptions"
               @mediaEnd="handleMediaEnd"
             />
           </template>
@@ -50,8 +51,10 @@
     :countdown="countdown"
     :isPlaying="isPlaying"
     :isVideoMuted="isMuted"
+    :showCaptions="showCaptions"
     @requestPlayPause="togglePlayPause"
     @requestMute="toggleMute"
+    @requestToggleCaptions="toggleCaptions"
     @requestResumeAudioContext="resumeAudioContext"
   />
 </template>
@@ -64,8 +67,6 @@ import { ref, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
 
 register();
-
-const thumbsSwiper = ref(null);
 
 const {
   handleMediaEnd,
@@ -80,6 +81,11 @@ const {
   isPlaying,
   countdown,
 } = useSwiper();
+
+const showCaptions = ref(false);
+const toggleCaptions = () => {
+  showCaptions.value = !showCaptions.value;
+};
 
 onMounted(() => {
   const mediaElements = document.querySelectorAll(

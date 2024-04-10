@@ -1,5 +1,7 @@
 import { ref } from "vue";
 
+// TODO: bug where if you pause the video, mute, and unmute, the music starts playing.
+
 // Web Audio API setup
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let audioSource = null;
