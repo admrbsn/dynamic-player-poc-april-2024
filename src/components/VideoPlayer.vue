@@ -16,7 +16,7 @@
     @loadeddata="videoLoaded"
     @ended="handleMediaEnd"
   ></video>
-  <div v-if="name" class="absolute bottom-4 ml-4 py-2 px-4 bg-white text-black rounded text-xl font-semibold">{{ name }}</div>
+  <div v-if="name" class="absolute bottom-4 ml-4 py-2 px-4 bg-white text-black rounded-sm text-xl font-semibold">{{ name }}</div>
 </template>
 
 <script setup>
@@ -105,11 +105,18 @@ video::-webkit-media-controls-toggle-closed-captions-button,
 video::-webkit-media-controls-volume-slider {
   @apply hidden;
 }
+
 video::-webkit-media-controls-panel {
-  @apply -mr-24;
+  @apply bg-none bg-black/90 h-12 absolute w-[calc(100%-20px)] bottom-0 left-0 m-2.5 rounded-lg;
 }
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+  @apply pb-2.5 text-xs leading-none;
+}
+
 video::-webkit-media-controls-timeline {
-  @apply mr-44;
+  @apply -mb-2;
 }
 
 @keyframes rotation {

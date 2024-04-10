@@ -1,15 +1,20 @@
 <template>
   <div
-    class="absolute top-0 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[368px] bg-transparent z-30 flex items-center justify-center mx-auto"
+    class="absolute top-3 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[368px] bg-transparent z-30 flex items-center justify-center mx-auto"
   >
-    <button @click="toggleCaptions" class="toggle-captions absolute right-[calc(-50%+36px)] md:right-10 bottom-1 -mb-16 py-1.5 px-3 rounded bg-transparent z-30">
-      <img :src="captionsIcon" alt="Toggle captions." class="w-6 h-6" />
+    <button
+      @click="toggleCaptions"
+      :class="{ 'visible': !isPlaying }"
+      class="toggle-captions absolute right-12 -bottom-8 bg-transparent z-30"
+    >
+      <img :src="captionsIcon" alt="Toggle captions." class="w-4 h-4" />
     </button>
     <button
       @click="toggleMute"
-      class="toggle-mute absolute right-[calc(-50%+12px)] md:right-0.5 bottom-1 -mb-16 py-1.5 px-3 rounded bg-transparent text-white z-30"
+      :class="{ 'visible': !isPlaying }"
+      class="toggle-mute absolute right-6 -bottom-8 bg-transparent text-white z-30"
     >
-      <component :is="muteIconComponent" class="w-6 h-6 text-white" />
+      <component :is="muteIconComponent" class="w-4 h-4 text-white" />
     </button>
     <div
       class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30"
@@ -39,7 +44,7 @@
     <!-- New full-size div for toggling play and pause -->
     <div
       @click="togglePlayPause"
-      class="absolute top-0 left-0 w-full h-[calc(100%-64px)] z-20 cursor-pointer"
+      class="absolute top-0 left-0 w-full h-full z-20 cursor-pointer"
     ></div>
   </div>
 </template>
@@ -97,6 +102,18 @@ const toggleCaptions = () => {
 
 .swiper-wrapper.intro-slide-visible.show-unmute-tip + div .toggle-play-pause {
   @apply opacity-60 pointer-events-none !important;
+}
+
+.toggle-captions, .toggle-mute {
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 1.25s, opacity 0.75s linear 0.5s;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0s, opacity 0.25s linear;
 }
 
 @keyframes pulse {
