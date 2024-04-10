@@ -33,22 +33,16 @@
     >
       {{ countdown }}
     </div>
-    <!-- Commented out the original play-pause button
-    <button
+    <!-- Full-size div for toggling play and pause -->
+    <div
       @click="togglePlayPause"
-      class="toggle-play-pause z-30"
+      class="group absolute top-0 left-0 w-full h-[calc(100%-60px)] md:h-full flex items-center justify-center z-20 transition-opacity cursor-pointer"
     >
       <component
         :is="iconComponent"
-        class="h-9 w-14 p-2 bg-[#0a0a0a]/75 text-white rounded hover:bg-[#0a0a0a] transition-opacity"
+        class="h-16 mt-[60px] text-white opacity-0 group-hover:opacity-50 transition-opacity override-opacity"
       />
-    </button>
-    -->
-    <!-- New full-size div for toggling play and pause -->
-    <div
-      @click="togglePlayPause"
-      class="absolute top-0 left-0 w-full h-[calc(100%-60px)] md:h-full z-20 cursor-pointer"
-    ></div>
+    </div>
   </div>
 </template>
 
@@ -56,8 +50,8 @@
 <script setup>
 import { computed } from "vue";
 import {
-  //PlayIcon,
-  //PauseIcon,
+  PlayIcon,
+  PauseIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
 } from "@heroicons/vue/24/solid";
@@ -73,7 +67,7 @@ const props = defineProps({
 
 const emits = defineEmits(["toggle", "toggleMute"]);
 
-//const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
+const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
 const captionsIcon = computed(() => props.showCaptions ? ccOn : ccOff);
 const muteIconComponent = computed(() =>
   props.isVideoMuted ? SpeakerXMarkIcon : SpeakerWaveIcon,
@@ -93,7 +87,7 @@ const toggleCaptions = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .swiper-wrapper.intro-slide-visible.show-unmute-tip + div > .tooltip {
   @apply block !important;
 }
@@ -117,6 +111,10 @@ const toggleCaptions = () => {
   opacity: 1;
   visibility: visible;
   transition: visibility 0s linear 0s, opacity 0.25s linear;
+}
+
+.override-opacity:hover {
+    opacity: 100% !important;
 }
 
 @keyframes pulse {

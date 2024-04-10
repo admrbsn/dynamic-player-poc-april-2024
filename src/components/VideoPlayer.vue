@@ -11,12 +11,13 @@
     controls
     disablepictureinpicture
     controlslist="nofullscreen nodownload noremoteplayback noplaybackrate"
+    :class="{ 'show-controls': !isPlaying }"
     :src="url"
     :muted="isVideoMuted"
     @loadeddata="videoLoaded"
     @ended="handleMediaEnd"
   ></video>
-  <div v-if="name" class="absolute bottom-4 ml-4 py-2 px-4 bg-white text-black rounded-sm text-xl font-semibold">{{ name }}</div>
+  <div v-if="name" :class="{ 'visible': isPlaying }" class="video-name absolute bottom-3 h-[46px] flex items-center ml-[10px] px-4 bg-white text-black rounded text-xl font-semibold">{{ name }}</div>
 </template>
 
 <script setup>
@@ -27,6 +28,7 @@ const props = defineProps({
   url: String,
   name: String,
   index: Number,
+  isPlaying: Boolean,
   isVideoMuted: Boolean,
   showCaptions: Boolean,
 });
@@ -87,7 +89,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .intro-slide-visible video {
   @apply bg-[#78cdbf];
 }
@@ -97,17 +99,45 @@ onMounted(() => {
   border-bottom-color: #ff6e6c;
 }
 
+.video-name {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0.5s, opacity 0.5s linear 1.0s;
+}
+
 /* webkit video controls */
 video::-webkit-media-controls-play-button,
 video::-webkit-media-controls-fullscreen-button,
 video::-webkit-media-controls-mute-button,
 video::-webkit-media-controls-toggle-closed-captions-button,
-video::-webkit-media-controls-volume-slider {
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-overflow-button {
   @apply hidden;
 }
 
+video::-webkit-media-controls {
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 1.25s, opacity 0.75s linear 0.5s;
+}
+
+video.show-controls::-webkit-media-controls {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0s, opacity 0.25s linear;
+}
+
+video::-webkit-media-controls-panels {
+  @apply transition-none;
+}
+
 video::-webkit-media-controls-panel {
-  @apply bg-none bg-black/90 h-12 absolute w-[calc(100%-20px)] bottom-0 left-0 m-2.5 rounded-lg;
+  @apply bg-none bg-black h-12 absolute w-[calc(100%-20px)] bottom-0 left-0 m-2.5 rounded;
 }
 
 video::-webkit-media-controls-current-time-display,
@@ -117,6 +147,14 @@ video::-webkit-media-controls-time-remaining-display {
 
 video::-webkit-media-controls-timeline {
   @apply -mb-2;
+}
+
+video::-webkit-media-controls-volume-control-container {
+  @apply left-10 bg-black z-20;
+}
+
+video::-webkit-media-text-track-display {
+  @apply top-auto bottom-2.5 left-1/2 -translate-x-1/2 w-fit p-3 rounded-none !important;
 }
 
 @keyframes rotation {

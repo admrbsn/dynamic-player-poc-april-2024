@@ -19,6 +19,7 @@
               :url="item.url"
               :name="item.name"
               :index="index"
+              :isPlaying="isPlaying"
               :isVideoMuted="isMuted"
               :showCaptions="showCaptions"
               @mediaEnd="handleMediaEnd"
@@ -49,7 +50,7 @@
       <swiper-slide
         v-for="(item, index) in mediaItems"
         :key="`thumb-${index}`"
-        class="transition-transform transition-opacity duration-100 hover:scale-105 cursor-pointer"
+        class="transition-transform transition-opacity duration-100 cursor-pointer"
       >
         <img :src="item.thumbnail" :alt="`Thumbnail ${index+1}`" class="w-full h-full object-cover rounded overflow-hidden">
         <div v-if="item.name" class="absolute bottom-0 left-0 w-full h-8 flex items-end pb-1 px-1 bg-gradient-to-t from-black/50 to-transparent text-white text-[10px] font-semibold">{{ item.name }}</div>
@@ -127,7 +128,7 @@ onMounted(() => {
 
 .thumbs-swiper swiper-slide.swiper-slide-thumb-active:before {
   content: "";
-  @apply absolute w-full h-full rounded shadow-[inset_0_0_0_2px_rgba(255,255,255,1.0)];
+  @apply absolute w-full h-full rounded shadow-[inset_0_0_0_2px_rgba(255,255,255,1.0)] z-30;
 }
 
 .thumbs-swiper swiper-slide:not(.swiper-slide-thumb-active) {
