@@ -1,5 +1,5 @@
 <template>
-  <div class="swiper-wrapper py-3 bg-black">
+  <div class="swiper-wrapper p-2 md:py-3 md:px-0 bg-black">
     <!-- Main Swiper -->
     <swiper-container
       class="swiper-container"
@@ -33,10 +33,18 @@
     <!-- Thumbnails Swiper -->
     <swiper-container
       class="thumbs-swiper w-full md:w-[768px] mt-2"
-      :slides-per-view="6"
       :space-between="8"
       :free-mode="true"
       :watch-slides-progress="true"
+      :slides-per-view="3.5"
+      :breakpoints="{
+        '768': {
+          slidesPerView: 4.5,
+        },
+        '1024': {
+          slidesPerView: 5.5,
+        },
+      }"
     >
       <swiper-slide
         v-for="(item, index) in mediaItems"
@@ -115,10 +123,6 @@ onMounted(() => {
 .swiper-container::part(button-prev),
 .swiper-container::part(button-next) {
   @apply hidden md:flex !important;
-}
-
-.thumbs-swiper::part(container) {
-  @apply overflow-visible;
 }
 
 .thumbs-swiper swiper-slide.swiper-slide-thumb-active:before {

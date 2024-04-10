@@ -2,20 +2,23 @@
   <div
     class="absolute top-3 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[368px] bg-transparent z-30 flex items-center justify-center mx-auto"
   >
+    <!-- Captions -->
     <button
       @click="toggleCaptions"
       :class="{ 'visible': !isPlaying }"
-      class="toggle-captions absolute right-12 -bottom-8 bg-transparent z-30"
+      class="toggle-captions absolute -right-10 md:right-12 bottom-[12.5%] md:-bottom-8 bg-transparent z-30"
     >
       <img :src="captionsIcon" alt="Toggle captions." class="w-4 h-4" />
     </button>
+    <!-- Mute -->
     <button
       @click="toggleMute"
       :class="{ 'visible': !isPlaying }"
-      class="toggle-mute absolute right-6 -bottom-8 bg-transparent text-white z-30"
+      class="toggle-mute absolute -right-16 md:right-6 bottom-[12.5%] md:-bottom-8 bg-transparent text-white rounded z-30"
     >
       <component :is="muteIconComponent" class="w-4 h-4 text-white" />
     </button>
+    <!-- Mobile unmute tootltip -->
     <div
       class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30"
     >
@@ -44,7 +47,7 @@
     <!-- New full-size div for toggling play and pause -->
     <div
       @click="togglePlayPause"
-      class="absolute top-0 left-0 w-full h-full z-20 cursor-pointer"
+      class="absolute top-0 left-0 w-full h-[calc(100%-60px)] md:h-full z-20 cursor-pointer"
     ></div>
   </div>
 </template>
