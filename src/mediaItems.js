@@ -16,7 +16,7 @@ export const mediaItems = [
     url: 'https://player.vimeo.com/external/932968538.m3u8?s=afcc33cf4ca698337479e93819d01aa18408af9f&logging=false',
     thumbnail: 'https://i.vimeocdn.com/video/1678584249-1f69fcd7f8922f82418c609c27a4d8e28ed9c0f8f83e1e0dce829a6fc7df6af1-d_640x360',
     name: 'Emma',
-    volume: 0.1,
+    volume: 0.2,
   },
   { type: 'image',
     url: '/title-slide.svg',
