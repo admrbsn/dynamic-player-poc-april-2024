@@ -34,6 +34,7 @@ export default function useSwiper() {
     const newMedia = mediaItems[newIndex];
     currentMediaIndex.value = newIndex;
     hasSlideChanged.value = true;
+    isPlaying.value = true;
 
     // This condition ensures audio plays only when the swiper index is beyond the first slide
     if (newIndex >= 1) {

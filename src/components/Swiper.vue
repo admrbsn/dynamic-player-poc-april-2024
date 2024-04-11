@@ -53,7 +53,9 @@
         class="transition-transform transition-opacity duration-100 cursor-pointer"
       >
         <img :src="item.thumbnail" :alt="`Thumbnail ${index+1}`" class="w-full h-full object-cover rounded overflow-hidden">
-        <div v-if="item.name" class="absolute bottom-0 left-0 w-full h-8 flex items-end pb-1 px-1 bg-gradient-to-t from-black/50 to-transparent text-white text-[10px] font-semibold">{{ item.name }}</div>
+        <div v-if="item.name" class="absolute bottom-0 left-0 w-full h-8 flex items-end pb-1 px-1 text-white text-[10px] font-semibold">
+          <span class="py-1 px-2 bg-black rounded-full">{{ item.name }}</span>
+        </div>
       </swiper-slide>
     </swiper-container>
   </div>
@@ -116,14 +118,17 @@ onMounted(() => {
   @apply absolute top-0 left-0 w-full h-full bg-[#0a0a0a]/50 z-30;
 }
 
-.intro-slide-visible .swiper-container::part(button-prev),
-.intro-slide-visible .swiper-container::part(button-next) {
-  @apply hidden !important;
-}
-
 .swiper-container::part(button-prev),
 .swiper-container::part(button-next) {
   @apply hidden md:flex !important;
+}
+
+.swiper-container::part(button-prev) {
+  @apply left-[calc(50%-448px)] w-4 opacity-25 hover:opacity-100;
+}
+
+.swiper-container::part(button-next) {
+  @apply right-[calc(50%-448px)] w-4 opacity-25 hover:opacity-100;
 }
 
 .thumbs-swiper swiper-slide.swiper-slide-thumb-active:before {

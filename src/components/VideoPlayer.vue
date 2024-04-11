@@ -96,7 +96,7 @@ onMounted(() => {
 
 .loader {
   animation: rotation 1s linear infinite;
-  border-bottom-color: #ff6e6c;
+  border-bottom-color: black;
 }
 
 .video-name {

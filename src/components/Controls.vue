@@ -20,10 +20,10 @@
     </button>
     <!-- Mobile unmute tootltip -->
     <div
-      class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded shadow-lg text-center z-30"
+      class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded-lg shadow-lg text-center z-30"
     >
-      <strong class="block mb-1.5 font-semibold">Ready to Watch?</strong>
-      <p class="mb-1 opacity-75 leading-snug">
+      <strong class="block mb-1.5 text-sm font-semibold">Ready to Watch?</strong>
+      <p class="mb-1 opacity-75 text-sm leading-snug">
         Please unmute your device to start enjoying this Tribute.
       </p>
     </div>
