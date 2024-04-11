@@ -37,13 +37,13 @@
       :space-between="8"
       :free-mode="true"
       :watch-slides-progress="true"
-      :slides-per-view="3.5"
+      :slides-per-view="3"
       :breakpoints="{
         '768': {
-          slidesPerView: 4.5,
+          slidesPerView: 4,
         },
         '1024': {
-          slidesPerView: 5.5,
+          slidesPerView: 5,
         },
       }"
     >

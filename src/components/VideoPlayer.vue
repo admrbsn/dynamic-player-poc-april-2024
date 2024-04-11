@@ -8,7 +8,7 @@
     preload="auto"
     class="w-full h-full object-cover bg-black"
     playsinline
-    controls
+    :controls="!isLoading"
     disablepictureinpicture
     controlslist="nofullscreen nodownload noremoteplayback noplaybackrate"
     :class="{ 'show-controls': !isPlaying }"

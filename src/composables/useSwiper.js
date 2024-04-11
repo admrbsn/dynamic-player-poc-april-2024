@@ -1,5 +1,5 @@
 import { mediaItems } from "../mediaItems.js";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { register } from "swiper/element/bundle";
 import { useAudio } from "./useAudio";
 
@@ -113,10 +113,16 @@ export default function useSwiper() {
     adjustVolume(isMuted.value ? 0 : volumeWhenUnmuted);
 
     if (isMobile.value) {
-      const directSwiperWrapper = document.querySelector(".swiper-wrapper");
-      if (directSwiperWrapper) {
-        directSwiperWrapper.classList.toggle("show-unmute-tip", isMuted.value);
-      }
+      nextTick(() => {
+        const directSwiperWrapper = document.querySelector(".swiper-wrapper");
+        if (directSwiperWrapper) {
+          if (isMuted.value) {
+            directSwiperWrapper.classList.add("show-unmute-tip");
+          } else {
+            directSwiperWrapper.classList.remove("show-unmute-tip");
+          }
+        }
+      });
     }
   };
 
