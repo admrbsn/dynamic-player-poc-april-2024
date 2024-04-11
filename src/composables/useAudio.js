@@ -49,8 +49,28 @@ function stopAudio() {
 }
 
 // Adjust audio volume
-function adjustVolume(volume) {
-  gainNode.gain.value = volume;
+function adjustVolume(newVolume) {
+  const currentVolume = gainNode.gain.value;
+  const step = 0.05; // Define the volume increment step
+  const delay = 50; // Delay in ms between volume steps
+
+  if (currentVolume < newVolume) {
+    const volumeIncreaseInterval = setInterval(() => {
+      if (gainNode.gain.value < newVolume) {
+        gainNode.gain.value += step;
+      } else {
+        clearInterval(volumeIncreaseInterval);
+      }
+    }, delay);
+  } else {
+    const volumeDecreaseInterval = setInterval(() => {
+      if (gainNode.gain.value > newVolume) {
+        gainNode.gain.value -= step;
+      } else {
+        clearInterval(volumeDecreaseInterval);
+      }
+    }, delay);
+  }
 }
 
 // Resume audio context for mobile
