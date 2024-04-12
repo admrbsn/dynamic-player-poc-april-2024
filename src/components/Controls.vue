@@ -1,7 +1,8 @@
 <template>
+  <!-- Control bar -->
   <div
     :class="{ 'controls-visible': controlsVisible }"
-    class="controls absolute bottom-2 left-1/2 transform -translate-x-1/2 w-[752px] flex items-center justify-between p-2 bg-black/90 rounded z-30"
+    class="controls absolute bottom-2 left-1/2 transform -translate-x-1/2 w-[calc(100%-16px)] md:w-[752px] flex items-center justify-between p-2 bg-black/90 rounded z-30"
     @mouseover="mouseOverControls = true"
     @mouseleave="mouseOverControls = false"
   >
@@ -29,6 +30,7 @@
       </button>
     </div>
   </div>
+
   <!-- Mobile unmute tootltip -->
   <div
     class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded-lg shadow-lg text-center z-30"
@@ -38,18 +40,20 @@
       Please unmute your device to start enjoying this Tribute.
     </p>
   </div>
-  <!-- Countdown -->
+
+  <!-- Countdown for images-->
   <div
     v-if="countdown > 0"
     class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center mr-[-50%] md:mr-0 bg-white text-[#0a0a0a] rounded-full text-xs font-semibold opacity-75"
   >
     {{ countdown }}
   </div>
+
   <!-- Play and pause -->
   <component
     :is="iconComponent"
     :class="{ 'play-pause-visible': !isPlaying || controlsVisible }"
-    class="play-pause absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-16 text-white pointer-events-none z-30"
+    class="play-pause absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-16 text-white pointer-events-none opacity-50 z-30"
   />
 </template>
 
