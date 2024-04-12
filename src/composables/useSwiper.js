@@ -197,6 +197,7 @@ export default function useSwiper() {
     isMuted,
     isPlaying,
     countdown,
+    currentMediaIndex,
     handleMediaEnd,
     togglePlayPause,
     onSlideChange,

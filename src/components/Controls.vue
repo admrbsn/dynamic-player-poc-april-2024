@@ -1,23 +1,34 @@
 <template>
   <div
-    class="absolute top-3 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[368px] bg-transparent z-30 flex items-center justify-center mx-auto"
+    class="absolute top-3 left-0 right-0 bottom-0 w-1/2 h-[300px] md:w-[768px] md:h-[432px] bg-transparent z-30 flex items-center justify-center mx-auto"
+    @mouseenter="hover = true" @mouseleave="hover = false"
   >
-    <!-- Captions -->
-    <button
-      @click="toggleCaptions"
-      :class="{ 'visible': !isPlaying }"
-      class="toggle-captions absolute -right-10 md:right-12 bottom-[12.5%] md:-bottom-8 bg-transparent z-30"
-    >
-      <img :src="captionsIcon" alt="Toggle captions." class="w-4 h-4" />
-    </button>
-    <!-- Mute -->
-    <button
-      @click="toggleMute"
-      :class="{ 'visible': !isPlaying }"
-      class="toggle-mute absolute -right-16 md:right-6 bottom-[12.5%] md:-bottom-8 bg-transparent text-white rounded z-30"
-    >
-      <component :is="muteIconComponent" class="w-4 h-4 text-white" />
-    </button>
+    <div :class="{ 'controls-visible': !isPlaying || hover }" class="controls absolute bottom-2 w-[calc(100%-16px)] flex items-center justify-between p-2 bg-black/90 rounded">
+      <!-- Duration -->
+      <span v-if="currentDuration" class="w-20 -mt-[1px] text-white text-xs">{{ displayTime }}</span>
+
+      <!-- Scrubber -->
+      <div class="w-full h-1 bg-white/25 rounded-full">
+        <div class="w-0 h-full bg-white rounded-full" :style="{ width: progressBarWidth }"></div>
+      </div>
+      
+      <div class="w-20 flex items-center justify-end gap-x-3">
+        <!-- Captions -->
+        <button
+          @click="toggleCaptions"
+          class="toggle-captions"
+        >
+          <img :src="captionsIcon" alt="Toggle captions." class="w-4 h-4" />
+        </button>
+        <!-- Mute -->
+        <button
+          @click="toggleMute"
+          class="toggle-mute text-white rounded"
+        >
+          <component :is="muteIconComponent" class="w-4 h-4 text-white" />
+        </button>
+      </div>
+    </div>
     <!-- Mobile unmute tootltip -->
     <div
       class="tooltip hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 w-[150%] max-w-96 p-4 bg-white text-[#0a0a0a] rounded-lg shadow-lg text-center z-30"
@@ -36,11 +47,11 @@
     <!-- Full-size div for toggling play and pause -->
     <div
       @click="togglePlayPause"
-      class="group absolute top-0 left-0 w-full h-[calc(100%-60px)] md:h-full flex items-center justify-center z-20 transition-opacity cursor-pointer"
+      class="group absolute top-0 left-0 w-full h-full flex items-center justify-center z-20 transition-opacity cursor-pointer"
     >
       <component
         :is="iconComponent"
-        class="h-16 mt-[60px] text-white opacity-0 group-hover:opacity-50 transition-opacity override-opacity"
+        class="h-16 text-white opacity-0 group-hover:opacity-50 transition-opacity override-opacity"
       />
     </div>
   </div>
@@ -48,7 +59,7 @@
 
 
 <script setup>
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import {
   PlayIcon,
   PauseIcon,
@@ -62,10 +73,13 @@ const props = defineProps({
   countdown: Number,
   isPlaying: Boolean,
   isVideoMuted: Boolean,
+  currentDuration: Number,
+  currentTime: Number,
   showCaptions: Boolean,
 });
+const hover = ref(false);
 
-const emits = defineEmits(["toggle", "toggleMute"]);
+const emits = defineEmits(["requestPlayPause", "requestMute", "requestResumeAudioContext", "requestToggleCaptions"]);
 
 const iconComponent = computed(() => (props.isPlaying ? PauseIcon : PlayIcon));
 const captionsIcon = computed(() => props.showCaptions ? ccOn : ccOff);
@@ -85,6 +99,28 @@ const toggleMute = () => {
 const toggleCaptions = () => {
   emits("requestToggleCaptions");
 };
+
+const formatDuration = (duration) => {
+  const minutes = Math.floor(duration / 60);
+  const seconds = Math.floor(duration % 60);
+  if (minutes > 0) {
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  } else {
+    return `:${seconds.toString().padStart(2, '0')}`; 
+  }
+};
+
+const displayTime = computed(() => {
+  return `${formatDuration(props.currentTime)} / ${formatDuration(props.currentDuration)}`;
+});
+
+const progressBarWidth = computed(() => {
+  if (props.currentDuration > 0 && props.currentTime >= 0) {
+    const percentage = (props.currentTime / props.currentDuration) * 100;
+    return `${percentage}%`;
+  }
+  return '0%';
+});
 </script>
 
 <style scoped>
@@ -101,16 +137,16 @@ const toggleCaptions = () => {
   @apply opacity-60 pointer-events-none !important;
 }
 
-.toggle-captions, .toggle-mute {
+.controls {
   opacity: 0;
-  visibility: hidden;
-  transition: visibility 0s linear 1.25s, opacity 0.75s linear 0.5s;
+  visibility: invisible;
+  transition: visibility 0.25s linear 0.25s, opacity 0.25s linear 0.25s;
 }
 
-.visible {
+.controls-visible {
   opacity: 1;
   visibility: visible;
-  transition: visibility 0s linear 0s, opacity 0.25s linear;
+  transition: visibility 0.25s linear 0.25s, opacity 0.25s linear 0.25s;
 }
 
 .override-opacity:hover {

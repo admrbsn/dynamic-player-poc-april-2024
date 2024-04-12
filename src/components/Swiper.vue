@@ -1,9 +1,12 @@
 <template>
-  <div class="swiper-wrapper p-2 md:py-3 md:px-0 bg-black">
+  <div class="swiper-wrapper md:py-3 md:bg-black">
     <!-- Main Swiper -->
     <swiper-container
       class="swiper-container"
       :navigation="true"
+      :slides-per-view="'auto'"
+      :centered-slides="true"
+      :space-between="8"
       :thumbs="{ swiper: '.thumbs-swiper' }"
       @swiperslidechange="onSlideChange"
       @swiperprogress="onProgress"
@@ -11,7 +14,7 @@
       <swiper-slide
         v-for="(item, index) in mediaItems"
         :key="`main-${index}`"
-        class="flex items-center justify-center"
+        class="md:w-[768px] flex items-center justify-center"
       >
         <div class="w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto rounded overflow-hidden">
           <template v-if="item.type === 'video'">
@@ -22,6 +25,8 @@
               :isPlaying="isPlaying"
               :isVideoMuted="isMuted"
               :showCaptions="showCaptions"
+              @videoDuration="handleVideoDuration"
+              @updateCurrentTime="updateCurrentTime"
               @mediaEnd="handleMediaEnd"
             />
           </template>
@@ -61,6 +66,8 @@
   </div>
   <Controls
     :countdown="countdown"
+    :currentDuration="videoDurations[currentMediaIndex]"
+    :currentTime="videoCurrentTimes[currentMediaIndex] || 0"
     :isPlaying="isPlaying"
     :isVideoMuted="isMuted"
     :showCaptions="showCaptions"
@@ -75,7 +82,7 @@
 import useSwiper from "../composables/useSwiper";
 import VideoPlayer from "./VideoPlayer.vue";
 import Controls from "./Controls.vue";
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { register } from "swiper/element/bundle";
 
 register();
@@ -92,9 +99,21 @@ const {
   isMuted,
   isPlaying,
   countdown,
+  currentMediaIndex,
 } = useSwiper();
 
+const videoDurations = reactive({});
+const videoCurrentTimes = reactive({});
 const showCaptions = ref(false);
+
+const handleVideoDuration = ({ index, duration }) => {
+  videoDurations[index] = duration;
+};
+
+const updateCurrentTime = ({ index, currentTime }) => {
+  videoCurrentTimes[index] = currentTime;
+};
+
 const toggleCaptions = () => {
   showCaptions.value = !showCaptions.value;
 };
@@ -131,9 +150,17 @@ onMounted(() => {
   @apply right-[calc(50%-448px)] w-4 opacity-25 hover:opacity-100;
 }
 
+.swiper-container swiper-slide:not(.swiper-slide-active) {
+  @apply opacity-50;
+}
+
+.swiper-container swiper-slide:not(.swiper-slide-active) .name {
+  @apply hidden;
+}
+
 .thumbs-swiper swiper-slide.swiper-slide-thumb-active:before {
   content: "";
-  @apply absolute w-full h-full rounded shadow-[inset_0_0_0_2px_rgba(255,255,255,1.0)] z-30;
+  @apply absolute w-full h-full rounded shadow-[inset_0_0_0_2px_rgba(0,0,0,1.0)] md:shadow-[inset_0_0_0_2px_rgba(255,255,255,1.0)] z-30;
 }
 
 .thumbs-swiper swiper-slide:not(.swiper-slide-thumb-active) {
