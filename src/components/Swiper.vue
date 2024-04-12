@@ -146,6 +146,7 @@ onMounted(() => {
   @apply left-[calc(50%-448px)] w-4 opacity-25 hover:opacity-100;
 }
 
+
 .swiper-container::part(button-next) {
   @apply right-[calc(50%-448px)] w-4 opacity-25 hover:opacity-100;
 }
