@@ -1,41 +1,61 @@
 <template>
   <div class="swiper-wrapper md:py-3 md:bg-black">
-    <!-- Main Swiper -->
-    <swiper-container
-      class="swiper-container"
-      :navigation="true"
-      :slides-per-view="'auto'"
-      :centered-slides="true"
-      :space-between="8"
-      :thumbs="{ swiper: '.thumbs-swiper' }"
-      @swiperslidechange="onSlideChange"
-      @swiperprogress="onProgress"
-    >
-      <swiper-slide
-        v-for="(item, index) in mediaItems"
-        :key="`main-${index}`"
-        class="md:w-[768px] flex items-center justify-center"
+    <div class="relative">
+      <!-- Main Swiper -->
+      <swiper-container
+        class="swiper-container"
+        :navigation="true"
+        :slides-per-view="'auto'"
+        :centered-slides="true"
+        :space-between="8"
+        :thumbs="{ swiper: '.thumbs-swiper' }"
+        @swiperslidechange="onSlideChange"
+        @swiperprogress="onProgress"
       >
-        <div class="w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto rounded overflow-hidden">
-          <template v-if="item.type === 'video'">
-            <VideoPlayer
-              :url="item.url"
-              :name="item.name"
-              :index="index"
-              :isPlaying="isPlaying"
-              :isVideoMuted="isMuted"
-              :showCaptions="showCaptions"
-              @videoDuration="handleVideoDuration"
-              @updateCurrentTime="updateCurrentTime"
-              @mediaEnd="handleMediaEnd"
-            />
-          </template>
-          <template v-else-if="item.type === 'image'">
-            <img :src="item.url" />
-          </template>
-        </div>
-      </swiper-slide>
-    </swiper-container>
+        <swiper-slide
+          v-for="(item, index) in mediaItems"
+          :key="`main-${index}`"
+          class="md:w-[768px] flex items-center justify-center cursor-pointer"
+          @click="togglePlayPause"
+          @mouseover="() => hoverSwiper = true"
+          @mouseleave="() => hoverSwiper = false"
+          @touchstart="() => hoverSwiper = true"
+          @touchend="() => hoverSwiper = false"
+        >
+          <div class="w-full h-[300px] md:w-[768px] md:h-[432px] mx-auto rounded overflow-hidden">
+            <template v-if="item.type === 'video'">
+              <VideoPlayer
+                :url="item.url"
+                :name="item.name"
+                :index="index"
+                :isPlaying="isPlaying"
+                :isVideoMuted="isMuted"
+                :showCaptions="showCaptions"
+                @videoDuration="handleVideoDuration"
+                @updateCurrentTime="updateCurrentTime"
+                @mediaEnd="handleMediaEnd"
+              />
+            </template>
+            <template v-else-if="item.type === 'image'">
+              <img :src="item.url" />
+            </template>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+      <Controls
+        :hoverSwiper="hoverSwiper"
+        :countdown="countdown"
+        :currentDuration="videoDurations[currentMediaIndex]"
+        :currentTime="videoCurrentTimes[currentMediaIndex] || 0"
+        :isPlaying="isPlaying"
+        :isVideoMuted="isMuted"
+        :showCaptions="showCaptions"
+        @requestMute="toggleMute"
+        @requestToggleCaptions="toggleCaptions"
+        @requestResumeAudioContext="resumeAudioContext"
+      />
+    </div>
+    <div class="relative">
     <!-- Thumbnails Swiper -->
     <swiper-container
       class="thumbs-swiper w-full md:w-[768px] mt-2"
@@ -64,18 +84,7 @@
       </swiper-slide>
     </swiper-container>
   </div>
-  <Controls
-    :countdown="countdown"
-    :currentDuration="videoDurations[currentMediaIndex]"
-    :currentTime="videoCurrentTimes[currentMediaIndex] || 0"
-    :isPlaying="isPlaying"
-    :isVideoMuted="isMuted"
-    :showCaptions="showCaptions"
-    @requestPlayPause="togglePlayPause"
-    @requestMute="toggleMute"
-    @requestToggleCaptions="toggleCaptions"
-    @requestResumeAudioContext="resumeAudioContext"
-  />
+  </div>
 </template>
 
 <script setup>
@@ -105,6 +114,7 @@ const {
 const videoDurations = reactive({});
 const videoCurrentTimes = reactive({});
 const showCaptions = ref(false);
+const hoverSwiper = ref(false);
 
 const handleVideoDuration = ({ index, duration }) => {
   videoDurations[index] = duration;
