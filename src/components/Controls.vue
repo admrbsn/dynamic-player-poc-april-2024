@@ -14,7 +14,7 @@
     <!-- Scrubber -->
     <div class="w-full h-1 bg-white/25 rounded-full">
       <div
-        class="w-0 h-full bg-white rounded-full"
+        class="w-0 h-full bg-white rounded-full transition-width duration-100 ease-linear"
         :style="{ width: progressBarWidth }"
       ></div>
     </div>
@@ -41,14 +41,6 @@
     </p>
   </div>
 
-  <!-- Countdown for images-->
-  <div
-    v-if="countdown > 0"
-    class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center mr-[-50%] md:mr-0 bg-white text-[#0a0a0a] rounded-full text-xs font-semibold opacity-75"
-  >
-    {{ countdown }}
-  </div>
-
   <!-- Play and pause -->
   <component
     :is="iconComponent"
@@ -70,12 +62,13 @@ import ccOff from "@/assets/cc-off.svg";
 
 const props = defineProps({
   hoverSwiper: Boolean,
-  countdown: Number,
   isPlaying: Boolean,
   isVideoMuted: Boolean,
   currentDuration: Number,
   currentTime: Number,
   showCaptions: Boolean,
+  currentDuration: Number,
+  currentTime: Number,
 });
 
 const emits = defineEmits([
@@ -119,7 +112,7 @@ const displayTime = computed(() => {
 });
 
 const progressBarWidth = computed(() => {
-  if (props.currentDuration > 0 && props.currentTime >= 0) {
+  if (props.currentDuration > 0) {
     const percentage = (props.currentTime / props.currentDuration) * 100;
     return `${percentage}%`;
   }

@@ -1,5 +1,5 @@
 import { mediaItems } from "../mediaItems.js";
-import { ref, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { register } from "swiper/element/bundle";
 import { useAudio } from "./useAudio";
 
@@ -18,8 +18,9 @@ export default function useSwiper() {
   const currentMediaIndex = ref(0);
   const isPlaying = ref(false);
   const autoAdvanceTimer = ref(null);
-  const countdown = ref(0);
   const remainingTime = ref(0);
+  const videoDurations = reactive({});
+  const videoCurrentTimes = reactive({});
   const isMobile = ref(
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent,
@@ -27,6 +28,11 @@ export default function useSwiper() {
   );
   const isMuted = ref(isMobile.value);
   const hasSlideChanged = ref(false);
+
+  mediaItems.forEach((item, index) => {
+    videoDurations[index] = item.duration || 5; // Default duration or derived from item
+    videoCurrentTimes[index] = 0; // Start with zero currentTime
+});
 
   const onSlideChange = (event) => {
     const swiper = event.target.swiper;
@@ -58,14 +64,10 @@ export default function useSwiper() {
 
     // Start a new timer for image slides
     if (newMedia.type === "image") {
-      const newMediaDuration = newMedia.duration || 5;
-      countdown.value = newMediaDuration;
-      remainingTime.value = newMediaDuration;
       startImageTimer(newIndex);
     }
-    // For video slides, ensure video playback and manage countdown/reset
+    // For video slides, ensure video playback
     else if (newMedia.type === "video") {
-      countdown.value = 0;
       remainingTime.value = 0;
       // Directly play the video associated with the new slide
       const newVideo = media.value[newIndex];
@@ -76,7 +78,7 @@ export default function useSwiper() {
 
     // Pause and reset playback for any videos that are not currently active
     media.value.forEach((mediaElement, index) => {
-      if (mediaItems[index].type === "video" && index !== newIndex) {
+      if (index !== newIndex && mediaItems[index].type === "video") {
         mediaElement.pause();
         mediaElement.currentTime = 0;
       }
@@ -130,30 +132,31 @@ export default function useSwiper() {
   const togglePlayPause = () => {
     const currentItem = mediaItems[currentMediaIndex.value];
   
-    isPlaying.value = !isPlaying.value;
+    isPlaying.value = !isPlaying.value;  // Toggle playing state
   
-    // Adjust the volume to respect the 'volume' property or use default values.
+    // Adjust volume based on the current state
     const adjustedVolume = currentItem.volume || (currentItem.type === 'image' ? 1.0 : 0.1);
     adjustVolume(isPlaying.value && !isMuted.value ? adjustedVolume : 0);
   
-    // Video playback
     if (currentItem.type === "video") {
-      const currentVideo = media.value[currentMediaIndex.value];
-      if (isPlaying.value) {
-        currentVideo.play();
-      } else {
-        currentVideo.pause();
-      }
+        const currentVideo = media.value[currentMediaIndex.value];
+        if (isPlaying.value) {
+            currentVideo.play();
+        } else {
+            currentVideo.pause();
+        }
+    } else if (currentItem.type === "image") {
+        if (!isPlaying.value) {
+            // Pause the timer but do not reset it
+            clearTimeout(autoAdvanceTimer.value);
+            autoAdvanceTimer.value = null;
+        } else {
+            // Resume timer from the current time instead of restarting it
+            startImageTimer(currentMediaIndex.value, videoCurrentTimes[currentMediaIndex.value]);
+        }
     }
-    else if (currentItem.type === "image") {
-      if (!isPlaying.value) {
-        clearTimeout(autoAdvanceTimer.value);
-        autoAdvanceTimer.value = null;
-      } else {
-        startImageTimer(currentMediaIndex.value, remainingTime.value);
-      }
-    }
-  };  
+};
+
 
   const handleMediaEnd = (index) => {
     if (index < mediaItems.length - 1) {
@@ -163,24 +166,25 @@ export default function useSwiper() {
     }
   };
 
-  const startImageTimer = (index, startTime = null) => {
-    const duration = mediaItems[index].duration || 5;
-    remainingTime.value = startTime !== null ? startTime : duration;
-
-    countdown.value = remainingTime.value;
-
+  const startImageTimer = (index, startTime = 0) => {
+    const duration = mediaItems[index].duration || 5; // Default to 5 seconds if not provided
+    videoDurations[index] = duration;
+    
+    // Use startTime if provided, otherwise start from 0
+    videoCurrentTimes[index] = startTime;
+    
+    const interval = 100; // Update every 100 milliseconds
     autoAdvanceTimer.value = setInterval(() => {
-      if (remainingTime.value > 0) {
-        remainingTime.value--;
-        countdown.value = remainingTime.value;
-      } else {
-        clearTimeout(autoAdvanceTimer.value);
-        autoAdvanceTimer.value = null;
-        remainingTime.value = duration;
-        handleMediaEnd(index);
-      }
-    }, 1000);
-  };
+        if (videoCurrentTimes[index] < duration) {
+            videoCurrentTimes[index] += 0.1; // Increment by 0.1 seconds every 100 milliseconds
+            if (videoCurrentTimes[index] >= duration) {
+                clearInterval(autoAdvanceTimer.value);
+                autoAdvanceTimer.value = null;
+                handleMediaEnd(index); // Move to the next slide
+            }
+        }
+    }, interval);
+};
 
   onMounted(() => {
     loadAudio(
@@ -196,8 +200,9 @@ export default function useSwiper() {
     isMobile,
     isMuted,
     isPlaying,
-    countdown,
     currentMediaIndex,
+    videoDurations,
+    videoCurrentTimes,
     handleMediaEnd,
     togglePlayPause,
     onSlideChange,

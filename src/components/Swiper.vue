@@ -45,10 +45,10 @@
         </swiper-slide>
       </swiper-container>
       <Controls
+        :key="forceUpdateKey"
         :hoverSwiper="hoverSwiper"
-        :countdown="countdown"
         :currentDuration="videoDurations[currentMediaIndex]"
-        :currentTime="videoCurrentTimes[currentMediaIndex] || 0"
+        :currentTime="videoCurrentTimes[currentMediaIndex]"
         :isPlaying="isPlaying"
         :isVideoMuted="isMuted"
         :showCaptions="showCaptions"
@@ -116,12 +116,11 @@ const {
   media,
   isMuted,
   isPlaying,
-  countdown,
   currentMediaIndex,
+  videoDurations,
+  videoCurrentTimes,
 } = useSwiper();
 
-const videoDurations = reactive({});
-const videoCurrentTimes = reactive({});
 const showCaptions = ref(false);
 const hoverSwiper = ref(false);
 
