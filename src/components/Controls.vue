@@ -52,7 +52,7 @@
   <!-- Play and pause -->
   <component
     :is="iconComponent"
-    :class="{ 'play-pause-visible': !isPlaying || controlsVisible }"
+    :class="{ 'play-pause-visible': controlsVisible }"
     class="play-pause absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-16 text-white pointer-events-none opacity-50 z-30"
   />
 </template>
